@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Secrets — copy config.example.py to config.py and fill in your own keys
+config.py
+
+# Runtime run artifacts (candidates, checkpoints, per-run logs)
+# Summary results for the paper are kept at the top level of outputs/
+outputs/run_*/
+outputs/run_test/
+outputs/LLMOA_*/
+outputs/_eval_runner.py
+
+# Knowledge graph backups (written at runtime)
+knowledge/_backups/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

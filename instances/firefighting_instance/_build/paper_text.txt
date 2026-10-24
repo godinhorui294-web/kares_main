@@ -1,0 +1,3289 @@
+
+
+===== PAGE 1 =====
+Dynamic Mission Planning
+Algorithm for UAV Formation
+in Battleﬁeld Environment
+JING ZHANG
+YANI CUI
+JIA REN
+Hainan University, Haikou, China
+The limited time duration and spatial instability of TSTs increase
+the difﬁculty of mission planning for unmanned aerial vehicle (UAV)
+formations, which in turn affects the task execution abilities of UAVs.
+Aiming at this problem, a multi-UAV dynamic mission planning al-
+gorithm based on the time window mechanism is proposed under
+a distributed formation structure. The proposed algorithm compre-
+hensively considers a variety of complex constraints involved in ac-
+tual application scenarios and constructs a UAV formation mission
+planning model with minimum task execution cost and path plan-
+ning cost as the optimization goal. In this article, particle swarm
+optimization algorithm is improved by introducing a speciﬁc particle
+coding method and a competitive co-evolutionary population updating
+strategy, to enhance the solution speed and accuracy of the mission
+planning model. In this way, the optimal task allocation strategy and
+task execution path are obtained to meet the mission requirements,
+and to achieve the multi-UAV cooperative reconnaissance, strike and
+evaluation of multiple TSTs. Furthermore, the effectiveness of the
+proposed algorithm is validated via simulations.
+Manuscript received 5 May 2022; revised 12 October 2022; accepted 18
+December 2022. Date of publication 26 December 2022; date of current
+version 9 August 2023.
+DOI. No. 10.1109/TAES.2022.3231244
+Refereeing of this contribution was handled by G. Inalhan.
+This work was supported in part by the National Natural Science Founda-
+tion of China under Grant 62262016 and Grant 61961160706, in part by
+Hainan Provincial Natural Science Foundation Innovation Research Team
+Project under Grant 620CXTD434, in part by the High-level Talent Project
+of Hainan Provincial Natural Science Foundation under Grant 620RC557,
+and in part by the program of the Scientiﬁc Research Foundation of Hainan
+University under Grant KYQD(ZR)1859.
+Author addresses: The authors are with the School of Information
+and Communication Engineering, Hainan University, Haikou 570228,
+China,
+E-mail:
+(pingpingezheng@126.com;
+ociue476eg@163.com;
+ociue476eg@163.com; ezfefsv2fq@21cn.com). (Corresponding author:
+Yani Cui.)
+0018-9251 © 2022 IEEE
+I.
+INTRODUCTION
+Unmanned aerial vehicle (UAV) has become the ‘air
+darling’ of modern warfare and the “invisible razor edge”
+of future battleﬁeld because of its low cost, good maneu-
+verability, and strong stealth. While facing an increasingly
+complex battleﬁeld environment, a single UAV faces difﬁ-
+culties in meeting the needs of multi-target combat missions
+with restriction factors, such as the load and combat range.
+Therefore, multiple UAVs in coordination are required to
+efﬁciently complete these tasks [1], [2], [3], [4], and the
+premise of multi-UAV cooperative combat is an effective
+mission planning strategy [5]. Multi-UAV cooperative mis-
+sion planning refers to obtaining reasonable task allocation
+and trajectory formulation of UAV formation according to
+the battleﬁeld situation, target state, and attribute of each
+UAV, to maximize the task execution efﬁciency. Therefore,
+multi-UAV cooperative mission planning can be decom-
+posed into two parts, namely multi-UAV cooperative task
+allocation and multi-UAV cooperative path planning [6],
+[7]. Speciﬁcally, multi-UAV cooperative task allocation
+corresponds to assigning one or more orderly tasks to UAVs
+within the formation based on the speciﬁc environmental
+information and task requirements, under the constraints
+of UAV attribute, to avoid resource conﬂicts and wastage
+and ensure that each UAV performs the tasks at a minimum
+cost [8]. On the other hand, multi-UAV cooperative path
+planning refers to formulating the task execution path for
+eachUAVundertheconstraintsofUAV’sperformance,time
+coordination, and space coordination, according to the task
+allocation results [9].
+However, with the continuous emergence of new targets
+in the battleﬁeld environment and increasing uncertainty of
+the targets, the effectiveness of traditional mission plan-
+ning algorithms can be insufﬁcient, especially in combat
+missions involving time-sensitive targets (TSTs). TST is a
+target that must be found, located, identiﬁed, attacked, and
+evaluated within a limited time window [10]. According
+to the maneuverability of the target, it can be divided into
+two categories, where one is a moving TST, such as a
+mobile missile launch system, a missile launch vehicle, an
+unmanned surface vehicle, and an underwater submarine.
+Meanwhile, the other is a ﬁxed TST, such as an intermit-
+tently open radar station and an erected missile launcher.
+The uncertainty of the duration window of TST is the
+key difference between a TST and other types of targets,
+which increases the difﬁculty of multi-UAV cooperative
+reconnaissance, strike, and evaluation of TSTs. The lim-
+ited duration and spatial instability of TSTs complicates
+the UAV cooperative mission planning with the following
+challenges:
+1) The topology of UAV formation network changes
+dynamically, and thus real-time and stable commu-
+nication between the UAVs is very important.
+2) Affected by the time window of TST, the temporal
+coupling relationship between the formation tasks
+3750
+IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS
+VOL. 59, NO. 4
+AUGUST 2023
+Authorized licensed use limited to: ZheJiang Sci-Tech University. Downloaded on March 16,2026 at 13:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+战场环境下无人机编队
+的动态任务规划算法
+荆张亚妮崔家仁海南大学，中
+国海口
+TSTs的时间持续性有限和空间不稳定性增加了无人机(
+UAV)编队任务规划的难度，从而影响了无人机的任务执行能力。
+针对这一问题，提出了一种基于时间窗机制的多无人机动态任务规
+划算法，该算法在分布式编队结构下进行。所提出的算法综合考虑
+了实际应用场景中涉及的各种复杂约束，并构建了以最小任务执行
+成本和路径规划成本为优化目标的无人机编队任务规划模型。本文
+通过引入特定的粒子编码方法和竞争性协同进化的群体更新策略，
+对粒子群优化算法进行了改进，以提高任务规划模型的求解速度和
+精度。通过这种方式，获得了最优的任务分配策略和任务执行路径，
+以满足任务需求。
+稿件收到日期：2022年5月5日；修订日期：2022年10月12日；接受日期：
+2022年12月18日。出版日期：2022年12月26日；当前版本日期：2023年
+8月9日。
+DOI编号10.1109/TAES.2022.3231244
+这篇论文的审稿由G.Inalhan负责。
+本工作部分得到了中国国家自然科学基金（项目编号62262016和
+61961160706）的资助，部分得到了海南省自然科学基金创新研究
+团队项目（项目编号620CXTD434）的资助，部分得到了海南省自
+然科学基金高层次人才项目（项目编号620RC557）的资助，部分
+得到了海南大学科研基金项目（项目编号KYQD(ZR)1859）的资助。
+作者地址：作者隶属于海南大学信息与通信工程学院，中国海口
+570228，电子邮箱：(pingpingezheng@126.com;
+ociue476eg@163.com;ociue476eg@163.com;
+ezfefsv2fq@21cn.com)。(通讯作者：崔亚妮。)
+0018‑9251©2022IEEE
+一、引言
+无人机（UAV）已经成为现代战争的“空中宠儿”
+和未来战场的“隐形利刃”，因为它成本低、机动性
+好、隐身性强。在面对日益复杂的战场环境时，单一
+无人机在负载和作战范围等限制因素下，难以满足多
+目标作战任务的需求。因此，需要多架无人机协同作
+战以高效完成这些任务，而多无人机协同作战的前提
+是有效的任务规划策略。多无人机协同任务规划是指
+根据战场情况、目标状态及每架无人机的属性，获得
+合理的任务分配和无人机编队轨迹制定，从而最大化
+任务执行效率。因此，多无人机协同任务规划可以分
+解为两部分，即多无人机协同任务分配和多无人机
+然而，随着战场环境中新目标的不断出现以及目
+标不确定性的增加，传统任务规划算法的有效性可能
+不足，尤其是在涉及时间敏感目标（TST）的作战任
+务中。时间敏感目标是必须在有限时间窗口内被发现、
+定位、识别、攻击和评估的目标 [10]。根据目标的可
+机动性，它可以分为两类，其中一类是移动时间敏感
+目标，例如移动导弹发射系统、导弹发射车辆、无人
+水面艇以及水下潜艇。另一类是固定时间敏感目标，
+例如间歇性开启的雷达站和竖立的导弹发射器。时间
+敏感目标持续时间窗口的不确定性是其与其他类型目
+标的关键区别，这增加了多无人机协同侦察、打击和
+评估时间敏感目标的难度。有限的持续时间和空间
+1)无人机编队网络的拓扑结构动态变化，因此无
+人机之间的实时且稳定的通信非常重要。2)受到
+TST时间窗口的影响，编队任务之间的时间耦合关
+系
+3750
+《电气与电子工程师学会航天与电子系统汇刊》第59卷，第4期8月20日
+23
+授权许可的使用仅限于：浙江科技大学。于2026年3月16日13:16:53UTC从IEEEXplore下载。适用限制。
+
+
+===== PAGE 2 =====
+is more complex, which increases the difﬁculty of
+constructing a mission planning model.
+3) Multi-UAV performing the current task will have
+an impact on the time window of the subsequent
+TSTs,andtherefore,thetaskneedstobedynamically
+re-planned, which requires the mission planning al-
+gorithm to solve the mission planning model quickly
+and accurately.
+In this article, a distributed dynamic mission planning
+algorithm based on the time window mechanism of TSTs
+is proposed. The proposed algorithm can redistribute the
+TSTs and dynamically update the execution path of multi-
+UAV tasks, according to the changes in the time window of
+TSTs and the performance of each UAV, to ensure an overall
+effectiveness of UAV formation against multiple TSTs in
+the battleﬁeld environment. The main contributions of this
+article are summarized as follows.
+1) For complex dynamic combat scenarios, considering
+the network topology, communication distance, and
+communication delay, a dynamic alliance formation
+strategy for the UAVs is designed.
+2) Under the constraints of TST state, UAV execu-
+tion ability, and formation coordination, the mission
+planning model is constructed with the minimum
+task execution cost and path planning cost as the
+optimization objective to improve the adaptability
+of algorithm to various application environments and
+application objects.
+3) The mission planning model has multiple constraints
+and optimization objectives, which increases the
+complexity of problem space and difﬁculty of solv-
+ing the model. Therefore, the existing particle swarm
+optimization (PSO) algorithm is improved in this
+work with a particle coding method and a population
+update strategy, to obtain the optimal task allocation
+and path planning strategy.
+II.
+RELATED WORK
+Multi-UAV cooperative mission planning is a typical
+multi-constraint combinatorial optimization problem, and
+the process can be divided into two parts: modeling and
+calculation. In multi-UAV cooperative mission planning,
+ﬁrstly, according to the battleﬁeld environment and task re-
+quirements, the problem of multi-UAV cooperative mission
+planning should be reasonably abstracted, the optimization
+objectives and constraints should be deﬁned, and a reason-
+able mission planning model should be established. Fol-
+lowing the model development, an appropriate optimization
+method can be used to dynamically solve the constructed
+mission planning model.
+There exist various methods to model the multi-UAV
+cooperative mission planning such as: multiple travelling
+salesman problem model; vehicle routing problem model;
+networkﬂowoptimizationmodel;resourcewelfareproblem
+model; mixed integer linear programming (MILP) model,
+etc. [11], [12], [13], [14]. Among them, the MILP is a
+popular modeling method, which transforms the multi-
+UAV cooperative mission planning problem into an integer
+programming problem, where various constraints can be
+introduced [15]. Likewise, in [16], under the constraints of
+task timing and task time window, a multi-UAV cooperative
+mission planning model was constructed based on the MILP
+model. In addition, aiming at the high dynamics, strong
+uncertainty, and multiconstraint problems faced by hetero-
+geneous agent path planning in complex environments, a
+heterogeneous agent path planning model was constructed
+based on the MILP model [17].
+Depending on the features of constructed multi-UAV
+cooperative mission planning model, it is necessary to use
+an appropriate optimization algorithm to solve the mission
+planning model. In this regard, there exist many kinds of
+optimization methods for solving the multi-UAV coopera-
+tive mission planning model. According to the formation
+control mode of UAV, the optimization methods for solving
+the cooperative mission planning model can be divided
+into centralized mission planning algorithm and distributed
+mission planning algorithm. Among them, the centralized
+mission planning algorithm can generate better solutions
+than the distributed mission planning algorithm and ensures
+a smaller computational load for each UAV. However, the
+optimal solution depends on the central node and its effec-
+tive communication with each UAV. Alternatively, to make
+full use of the autonomous abilities of each UAV to improve
+theefﬁciencyofsolutionandavoidthedefectsofcentralized
+solution framework, such as a large load of the central node
+and poor robustness of the system, the distributed mission
+planning algorithm has gradually become the prime focus
+of academic attention [18], [19], [20]. In distributed control
+mode, effective message transmission and data exchange
+are needed among the UAVs to achieve the consensus of
+formation task allocation and maximize the formation task
+execution efﬁciency. Based on how the UAVs in a formation
+reach a consensus, the distributed mission planning algo-
+rithm can be divided into two categories, namely, distributed
+mission planning algorithm based on the consistency of
+situation information and distributed mission planning al-
+gorithm based on the task consistency. The former that ﬁrst
+allocates the tasks and then attempts to reach a consensus.
+Speciﬁcally, each UAV in the formation ﬁrst uses its ob-
+servation information for task allocation and then realizes
+the consensus of task allocation results through information
+interaction within the formation (the content of interactive
+information is the task allocation result, task execution
+cost, or beneﬁt of each UAV) [21]. On the other hand, the
+mission planning algorithm based on situation information
+consistency is a consensus redistribution algorithm. First,
+information is shared within the formation (the interactive
+information content is the observation information obtained
+by each UAV sensor), and then the UAVs fuse the received
+observation information to make the situation information
+in the formation reach a consensus. Relying on this concept,
+heuristic algorithms such as genetic algorithm (GA), PSO,
+ant colony optimization (ACO), simulated annealing (SA)
+and binarized neural network (BNN) can be used to solve
+ZHANG ET AL.: DYNAMIC MISSION PLANNING ALGORITHM FOR UAV
+3751
+Authorized licensed use limited to: ZheJiang Sci-Tech University. Downloaded on March 16,2026 at 13:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+更复杂，这增加了构建任务规划模型的难度。
+3)多无人机执行当前任务将会影响后续TST的时
+间窗口，因此，需要对任务进行动态重新规划，
+这要求任务规划算法能够快速且准确地求解任务
+规划模型。
+在本文中，提出了一种基于TST时间窗口机制的
+分布式动态任务规划算法。该算法可以根据TST时间
+窗口的变化以及各无人机的性能，重新分配TST并动
+态更新多无人机任务的执行路径，以确保无人机编队
+在战场环境中对多个TST的整体有效性。本文的主要
+贡献总结如下。
+1)针对复杂的动态作战场景，考虑网络拓扑、通信
+距离和通信延迟，设计了无人机的动态联盟形成策
+略。2)在TST状态、无人机执行能力和编队协作
+的约束下，构建了以最小任务执行成本和路径规划
+成本为优化目标的任务规划模型，以提高算法对各
+种应用环境和应用对象的适应性。3)该任务规划
+模型具有多重约束和优化目标，增加了问题空间的
+复杂性和模型求解的难度。因此，本研究改进了现
+有的粒子群优化（PSO）算法，引入粒子编码方法
+和种群更新策略，以获得最优的任务分配和路径规
+划策略。
+二、相关工作
+多无人机协同任务规划是典型的多约束组合优化
+问题，其过程可以分为两个部分：建模和计算。在多
+无人机协同任务规划中，首先，应根据战场环境和任
+务需求，对多无人机协同任务规划问题进行合理抽象，
+确定优化目标和约束条件，并建立合理的任务规划模
+型。在模型建立之后，可以使用适当的优化方法对构
+建的任务规划模型进行动态求解。
+存在多种方法来对多无人机协作任务规划进行建
+模，例如：多旅行商问题模型；车辆路径问题模型；
+网络流优化模型；资源福利问题模型；混合整数线性
+规划（MILP）模型等。其中，MILP是一个
+流行的建模方法，将多无人机协同任务规划问题转化
+为整数规划问题，可以引入各种约束条件 [15]。同样
+地，在 [16], 中，在任务时序和任务时间窗的约束下，
+构建了一个基于MILP模型的多无人机协同任务规划
+模型。此外，针对复杂环境中异构智能体路径规划所
+面临的高动态性、强不确定性和多约束问题，构建了
+一个基于MILP模型的异构智能体路径规划模型 [17]。
+根据所构建的多无人机协同任务规划模型的特征，
+有必要使用适当的优化算法来求解任务规划模型。在
+这方面，存在多种用于求解多无人机协同任务规划模
+型的优化方法。根据无人机的编队控制模式，求解协
+同任务规划模型的优化方法可以分为集中式任务规划
+算法和分布式任务规划算法。其中，集中式任务规划
+算法能够生成比分布式任务规划算法更优的解决方案，
+并确保每个无人机的计算负荷更小。然而，最优解依
+赖于中央节点及其与各无人机的有效通信。另一方面，
+为了充分利用每个无人机的自主能力以提升求解效率
+并避免集中式解决框架的缺陷，
+张等：无人机动态任务规划算法
+3751
+授权许可的使用仅限于：浙江科技大学。于2026年3月16日13:16:53UTC从IEEEXplore下载。适用限制。
+
+
+===== PAGE 3 =====
+the formation mission planning model [22], [23], [24], [25].
+Compared with the mission planning algorithm based on
+task consistency, this kind of algorithm solves the mission
+planning model based on the global observation informa-
+tion, which can ensure the maximization of formation task
+execution efﬁciency. In [26], GA was used to complete
+the task allocation under the background of multi-UAV co-
+operative reconnaissance /strike/evaluation integrated task.
+Aiming at the task allocation problem of multi-UAV ﬁght-
+ing against sudden threats, the ACO algorithm was used
+to complete the task allocation [27]. In [28], under the
+constraints of task priority, task execution time, and UAV’s
+own performance, the formation task allocation was real-
+ized by PSO algorithm where the formation task execution
+cost was used as the ﬁtness function of the particle. Since
+PSO algorithm is prone to premature convergence when
+solving the task assignment problem, in [29], the crossover
+and mutation mechanism of GA algorithm was used to
+ensure the diversity of particle population and improve the
+global search ability of PSO algorithm. Swarm-GAP is a
+heuristic that combines swarm intelligence strategy with the
+generalized assignment problem (GAP) method. Likewise,
+Amorim et al. [30] solved the task allocation problem in dy-
+namic scenarios by extending the swarm-GAP method. Xie
+et al. [31] applied deep reinforcement learning to study the
+three-dimensional (3-D) path planning problem of a cellular
+connected UAV. Wu et al. [32] deployed a new type of UAV,
+unmanned surface vessel, and underwater vehicle system, to
+investigate and solve the problem of heterogeneous multi-
+agent cooperative path planning. Zuo et al. [33] introduced
+simple attention model (SAM) into dynamic information
+reinforcement learning (DIRL), and proposed a mission
+planning method DIRL-SAM to quickly deal with the mis-
+sion planning problem of large UAV clusters. However, the
+above algorithm ignored the TST time window constraints,
+and thus, it is difﬁcult to apply in actual scenarios. For
+TST task allocation problems, Chen et al. [34] proposed
+a TST cooperative strike algorithm based on the distributed
+auction algorithm, which reduces the formation decision
+time, but needs to improve the task execution efﬁciency.
+Evers et al. [35] tackle the online stochastic UAV mission
+planning problem with time windows and TSTs using a
+replanning approach. Zhen et al. [36] used a combination
+of multiobjective optimization and heuristic algorithms to
+achieve time-sensitive task allocation. Chen et al. [37] used
+the TST time window as a constraint and used the wolf pack
+algorithmtoeffectivelysolvetheproblemofthedynamical-
+location of multiple UAVs for multiple time-sensitive tasks.
+Atencia et al. [38] completed the dynamic task allocation of
+formations by comprehensively evaluating the target threat
+cost, distance cost, task execution time, damage capability,
+and strike beneﬁt, ensuring the maximum effectiveness of
+the UAV formation against multiple TSTs. However, the
+TST allocation methods proposed in the above literature
+were mainly based on a ﬁxed time window. When the TST
+time window changes, these approaches lack the dynamic
+response ability to react to this change, which will affect
+Fig. 1.
+Dynamic planning process of multi-UAV cooperative
+time-sensitive mission.
+the effectiveness of the UAV formation in performing time-
+sensitive tasks.
+To overcome above issues, this article studies the prob-
+lem of multi-UAV cooperative reconnaissance, strike, and
+evaluation of TSTs under distributed control mode. First,
+according to the characteristics of TSTs, the problem of
+multi-UAV cooperative reconnaissance, strike, and evalua-
+tion of TSTs is formulated in Section III. Next, considering
+a variety of complex constraints in practical application
+scenarios, the mission planning model of UAV formation is
+constructed with an aim to minimize the task execution cost
+and path planning cost, which is discussed in Section IV. In
+Section V, the PSO algorithm is improved by introducing
+a speciﬁc particle coding method and a competitive co-
+evolutionary population update strategy, to accelerate the
+solution speed of mission planning model, and to obtain
+the optimal allocation strategy and task execution path that
+meet the mission requirements. In Section VI, the effective-
+ness and performance of the multi-UAV cooperative time-
+sensitive mission dynamic planning algorithm proposed in
+this article are veriﬁed by simulation experiments. Finally,
+in Section VII, summarize the conclusions and the future
+work directions.
+III.
+PROBLEM DESCRIPTION
+It is assumed here that multiple UAVs adopt a dis-
+tributed formation structure based on the dynamic alliance
+mechanism, to cooperatively reconnaissance, strike, and
+evaluate TSTs. Since the execution of current TST by the
+UAV formation will affect the subsequent time window
+of the TST, once the current TST is executed, the task
+needs to be replanned. Fig. 1 shows the dynamic planning
+process of multi-UAV cooperative time-sensitive mission.
+As shown in Fig. 1, the process of multi-UAV cooperative
+reconnaissance, strike, and evaluation of TSTs is as follows.
+1) Alliance Release Phase: The UAV that evaluates the
+current TST is used as the leader of the alliance to issue the
+recruitment information to other UAVs. The recruitment
+3752
+IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS
+VOL. 59, NO. 4
+AUGUST 2023
+Authorized licensed use limited to: ZheJiang Sci-Tech University. Downloaded on March 16,2026 at 13:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+编队任务规划模型 [22], [23], [24], [25]。与基于任务一
+致性的任务规划算法相比，这种算法解决了基于全局
+观测信息的任务规划模型问题，可以保证编队任务执
+行效率的最大化。在 [26], 中，使用GA完成了多无
+人机协同侦察/打击/评估一体化任务背景下的任务分配。
+针对多无人机应对突发威胁的任务分配问题，使用
+ACO算法完成了任务分配 [27]。在 [28], 中，在任
+务优先级、任务执行时间以及无人机自身性能约束下，
+通过PSO算法实现了编队任务分配，其中编队任务执
+行成本被用作粒子的适应度函数。由于PSO算法在解
+决任务分配问题时容易发生早熟收敛，在 [29],中采用
+了GA算法的交叉和变异机制
+图1.多无人机协同时间敏感任务的动态规划过程。
+无人机编队在执行时间敏感任务中的有效性。
+为克服上述问题，本文研究了分布式控制模式下
+多无人机协同侦察、打击及TST评估的问题。首先，
+结合TST的特点，在第三节中提出了多无人机协同侦
+察、打击及TST评估的问题建模。接着，考虑实际应
+用场景中各种复杂约束，构建了无人机编队任务规划
+模型，以最小化任务执行成本和路径规划成本，并在
+第四节中进行了讨论。在第五节中，通过引入特定的
+粒子编码方法和竞争共生群体更新策略对PSO算法进
+行了改进，以加快任务规划模型的求解速度，并获得
+满足任务要求的最优分配策略和任务执行路径。在第
+六节中，验证了多无人机协同时间
+三、问题描述
+这里假设多个无人机采用基于动态联盟机制的分
+布式编队结构，以协同执行侦察、打击和评估时间敏
+感目标（TST）。由于无人机编队执行当前TST会影
+响后续TST的时间窗口，一旦当前TST执行，任务需
+要重新规划。图1展示了多无人机协同时间敏感任务
+的动态规划过程。如图1所示，多无人机协同对TST进
+行侦察、打击和评估的过程如下。
+1）联盟发布阶段：评估当前TST的无人机被用作
+联盟的领导者，向其他无人机发布招募信息。招募
+3752
+《IEEE航天与电子系统学报》第59卷第4期8月20日
+23
+授权许可的使用仅限于：浙江科技大学。于2026年3月16日13:16:53UTC从IEEEXplore下载。适用限制。
+
+
+===== PAGE 4 =====
+information includes the information of the alliance leader
+and the information detected by its airborne equipment.
+2) Alliance Application Stage: Other UAVs send the ap-
+plication information to the alliance leader, which includes
+each UAV’s information and information detected by its
+airborne equipment.
+3) Alliance Authorization Phase: The alliance leader
+determines the alliance members under the constraints of
+communication distance R and communication delay δ, to
+maintain the connectivity of UAV formation, realize infor-
+mation sharing among UAVs, and ensure the consistency
+and globality of the situation information. The UAV forma-
+tion adopts the ad-hoc network architecture. To ensure the
+stability and real-time performance of message transmis-
+sion, it is assumed that the maximum number of jumps in a
+message transmission is Hmax = 2, that is, each message is
+forwarded at most twice, so the maximum communication
+distance of each UAV is 2R. Therefore, the UAV within the
+communication distance of the alliance leader will become
+a member of the alliance, also as a relay UAV. Meanwhile,
+the UAV that can establish communication with the alliance
+leader through relay UAVs will also become a member of
+the alliance, while the UAV outside the maximum commu-
+nication distance of the alliance leader will be dismissed.
+The larger the number of dismissed members, the lower the
+task efﬁciency of UAV formation.
+4) Mission Planning and Execution Phase: Each UAV
+is composed of a collaborative planning subsystem and a
+collaborativecontrolsubsystem. Thecollaborativeplanning
+subsystem is responsible for the decision-making tasks,
+whereas the collaborative control subsystem is responsible
+for controlling the motion platform to perform the tasks.
+For each UAV in the formation, the cooperative planning
+subsystem uses improved PSO algorithm for completing the
+cooperative task allocation while considering the TST state,
+UAV execution ability, and communication constraints, and
+then completes the formation path planning. The formation
+aggregation controller in the cooperative control subsystem
+controls the UAV tracking path to efﬁciently perform the
+task. Besides, each dismissed member, after completing an
+ongoing task, maneuvers one by one to the remaining task
+positions in its task list at maximum speed. During ﬂight, if
+it detects an unknown target, a temporary alliance is formed
+to coordinate the reconnaissance, strike, and evaluation of
+unknown target. After the unknown target is eliminated, the
+temporarily formed alliance is dissolved and the dismissed
+member ﬂies according to its original plan. If the dismissed
+member is close to the alliance member and can establish
+a communication with them during the ﬂight, it establishes
+a communication with the corresponding alliance leader.
+Otherwise, the dismissed member continues ﬂies according
+to its original plan. If the dismissed member arrives at a
+task point and the corresponding task is not executed yet,
+then the dismissed member hovers around the task point
+and wait for other alliance members to ﬂy over, where
+and it establishes a communication with the corresponding
+alliance leader through alliance members. Otherwise, the
+dismissed member continues ﬂies according to its original
+plan. Once the dismissed member passes all the task points
+on its task list one by one and ﬁnds that all tasks have been
+completed, it maneuvers to the assembly point, establishes
+communication with the alliance leader during the assembly
+process, and then becomes a member of the alliance.
+5) Formation Assembly and Formation Maintenance
+Phase: The UAV formation cooperatively completes all the
+tasks to reach the assembly point to generate the desired
+formation, and the formation-keeping controller in the co-
+operative control subsystem controls the UAV to keep the
+formation ﬂying cooperatively to the target endpoint.
+IV.
+CONSTRUCTION OF UAV FORMATION MISSION
+PLANNING MODEL
+The construction of a multi-UAV cooperative reconnais-
+sance, attack, and evaluation TST mission planning model
+requires full consideration of the constraints of the UAV
+formationtoestablishamulti-objectiveoptimizationmodel.
+The model can be characterized as follows:
+min J = min
+
+i∈U
+⎛
+⎝
+j∈Task
+
+m∈Type
+f m
+i j × xm
+i j + disi
+⎞
+⎠
+s.t.
+ f m
+i j s.t. Cons1
+disi s.t. Cons2
+(1)
+where U = {1, 2, . . . , n} represents the UAV formation set.
+TheattributesetofUAVi is{Pi, Qi, Bi,V i, Li},Pi represents
+the UAVi position coordinates, Qi ∈{Fighter, Scout} is the
+UAVi type, Fighter represents a ﬁghter aircraft, Scout rep-
+resents a scout aircraft, Bi is the number of UAVi airborne
+weapons, V i is the cruise speed of UAVi, and Li is the
+farthest navigation distance of UAVi. Task = {1, 2, . . . , M}
+represents the TST set, Type = {1, 2, 3} represents the
+task type set, and each TST contains three types of tasks,
+T 1
+j , T 2
+j , and T 3
+j , which represent reconnaissance task, at-
+tack task, and evaluation task of TSTj, respectively. The
+attribute set of T m
+j is {pm
+j , qm
+j , bm
+j ,t j}, where pm
+j represents
+the position coordinates of T m
+j , qm
+j is the type of T m
+j , and
+bm
+j is the number of weapons consumed to execute T m
+j .
+t j = {tstart
+j
+, tend
+j
+, Dj} is the state information of TSTj, and
+tstart
+j
+and tend
+j
+are the emergence and disappearance times of
+TSTj, respectively, which are preset by the UAVi collabora-
+tive planning subsystem according to the operational intent
+and battleﬁeld situation. The relationship between tstart
+j
+and
+tend
+j
+is tend
+j
+= tstart
+j
++ Dj. Dj is the time window of TSTj,
+which is affected by UAVi attacking the current task, and
+the expression is shown as follows:
+Dj (t) = Dj (t −1) + di jh
+(2)
+where di jh, ∀h ∈Task, h ̸= j represents the variation of the
+time window width, that is, the execution of T m
+h by UAVi
+will affect other subsequent TSTj time windows, but does
+not affect the occurrence time of subsequent TSTs. It is
+assumed that di jh is generated in a random data set with a
+mean of 0.5 and a standard deviation of 0.78.
+xm
+i j speciﬁes whether UAVi executes T m
+j ; if it has been
+executed, then xm
+i j = 1; otherwise, xm
+i j = 0. J represents the
+ZHANG ET AL.: DYNAMIC MISSION PLANNING ALGORITHM FOR UAV
+3753
+Authorized licensed use limited to: ZheJiang Sci-Tech University. Downloaded on March 16,2026 at 13:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+信息包括联盟领导者的信息以及其空中设备检测到的信息。
+2)联盟申请阶段：其他无人机将申请信息发送给
+联盟领导者，包括每架无人机的信息及其机载设备检
+测到的信息。
+3)联盟授权阶段：在通信距离R和通信延迟 δ的
+约束下，联盟领导者确定联盟成员，以保持无人机编
+队的连通性，实现无人机之间的信息共享，并确保态
+势信息的一致性和全局性。无人机编队采用自组织网
+络架构。为确保消息传输的稳定性和实时性，假设消
+息传输的最大跳数为Hmax = 2，即每条消息最多转发
+两次，因此每架无人机的最远通信距离为2R。因此，
+在联盟领导者通信范围内的无人机将成为联盟成员，
+同时也是中继无人机。同时，可以通过中继无人机与
+联盟领导者建立通信的无人机也将成为联盟成员，而
+位于联盟最大通信距离之外的无人机...
+4)任务规划与执行阶段：每个无人机由协作规划
+子系统和协作控制子系统组成。协作规划子系统负责
+决策任务，而协作控制子系统负责控制运动平台以执
+行任务。对于编队中的每架无人机，协作规划子系统
+使用改进的粒子群优化（PSO）算法在考虑TST状态、
+无人机执行能力和通信约束的情况下完成协作任务分
+配，然后完成编队路径规划。协作控制子系统中的编
+队聚合控制器控制无人机跟踪路径以高效执行任务。
+此外，每个已完成任务的成员，在完成当前任务后，
+将以最大速度按顺序机动到其任务列表中剩余的任务
+位置。在飞行过程中，如果检测到未知目标，将形成
+临时联盟进行协调。
+计划。一旦被解雇的成员逐一完成其任务清单上的所
+有任务点，并发现所有任务已完成，它会机动到集合
+点，在集合过程中与联盟领导建立通信，然后成为联
+盟的成员。
+5)编队集合阶段和编队维护阶段：无人机编队合
+作完成所有任务，以到达集合点生成所需的编队，协
+同控制子系统中的编队保持控制器控制无人机协同保
+持编队飞行至目标终点。
+四、无人机编队任务规划模型的构建
+多无人机协同侦察、攻击与评估TST任务规划模
+型的构建，需要充分考虑无人机编队的约束，以建立
+多目标优化模型。该模型可以描述如下：
+min J = min
+
+i∈U
+⎛
+⎝
+j∈Task
+
+m∈Type
+f m
+i j × xm
+i j + disi
+⎞
+⎠
+s.t.
+ f m
+i j s.t. Cons1
+disi s.t. Cons2
+(1)
+其中U = {1, 2, . . . , n} 表示无人机编队集合。无人机i
+的属性集是{Pi，Qi，Bi，Vi，Li}，Pi代表无人机i
+位置坐标，Qi ∈{战斗机，侦察} 是无人机i 类型，战斗
+机代表战斗机，侦察代表‑怨恨侦察机，Bi 代表无人
+机i 空中武器数量，V i 是无人机i的巡航速度，Li 是无
+人机i的最远导航距离。任务= {1, 2, . . . , M}代表TST
+集合，类型= {1, 2, 3} 表示任务类型集合，每个TST
+包含三种任务类型，T 1j、T 2j和T 3
+j ，分别代表TSTj
+的侦察任务、定位任务和评估任务。Tmj的属性集为
+{pm
+j ，qm
+j ，bm
+j ，tj}，其中pm
+j 表示Tmj的位置坐标，
+qm
+j 是T m
+j 的类型，bm
+j 是执行T m
+j 所消耗的武器数量。
+tj = {tstart
+j
+，tend
+j
+，Dj} 是TSTj的状态信息，tstart
+j
+和
+t{v4
+Dj (t) = Dj (t −1) + di jh
+(2)
+其中di jh, ∀h ∈任务，h ̸= j表示时间窗口宽度的变化，
+即UAVi执行T m
+h 将影响其他后续TSTj 时间窗口，但
+不会影响后续TST的发生时间。假设di jh 是在一个均
+值为0.5、标准差为0.78的随机数据集中生成的。
+xm
+i j 指定无人机i 是否执行Tmj；如果已执行，则
+xm
+i j = 1；否则，xm
+i j = 0。J代表
+张等：无人机动态任务规划算法
+3753
+授权许可的使用仅限于：浙江科技大学。于2026年3月16日13:16:53UTC从IEEEXplore下载。适用限制。
+
+
+===== PAGE 5 =====
+ﬁtness function of the mission planning model. f m
+i j repre-
+sents the task execution cost, which is subject to constraint
+Cons1. This constraint includes a task state constraint and
+a UAV execution capability constraint. disi represents the
+path planning cost, which is subject to constraint Cons2.
+This constraint includes a formation aggregation collab-
+orative constraint and a formation holding collaborative
+constraint.
+A.
+Task Execution Cost and Constraint Conditions
+To enhance the adaptability of the mission planning
+model to the application environment, especially the dy-
+namic response ability to the change of a TST time window,
+the task execution cost is constructed by considering the
+task revenue and resource consumption under the constraint
+Cons1. The expression is shown as follows:
+f m
+i j = ω1 f _costm
+i j −ω2 f _valuem
+i j
+(3)
+where ω1, ω2 is the weighted coefﬁcient. f _costm
+i j represents
+the costofUAVi executingT m
+j . f _valuem
+i j representsthe task
+revenue obtained by UAVi executing T m
+j , and the expression
+is shown as follows:
+f _valuem
+i j (t) = λm
+j (t) Valuem
+j (t0) Pm
+i j (t)
+(4)
+where Valuem
+j (t0) represents the inherent value of T m
+j , which
+is preset by the UAVi collaborative planning subsystem
+according to the operational intent and battleﬁeld situation,
+and λm
+j (t) represents the time-sensitive characteristic func-
+tion, which is used to evaluate the impact of time-sensitive
+characteristics on the task revenue. During the task execu-
+tion,T m
+j increasesmonotonicallywithtimeinthetimerange
+t ∈[tstart
+j
+,tmost
+j
+]. In the time range t ∈[tmost
+j
+,tend
+j
+], the value
+T m
+j
+decreases monotonically with time. The value T m
+j
+is
+the largest at the time tmost
+j
+. At another time t /∈[tstart
+j
+,tend
+j
+],
+the value T m
+j
+is 0, as shown in (5). Pm
+i j (t) represents the
+probability of UAVi executing T m
+j at the time t
+λm
+j (t) =
+⎧
+⎪⎪⎪⎨
+⎪⎪⎪⎩
+μ
+
+t −tstart
+j
+
+,
+t ∈
+
+tstart
+j
+,tmost
+j
+
+, μ>0
+μ
+
+t −tmost
+j
+
++
+
+tend
+j
+−tmost
+j
+
+,
+t ∈
+
+tmost
+j
+,tend
+j
+
+, μ<0
+0,
+t /∈
+
+tstart
+j
+,tend
+j
+
+.
+(5)
+f _costm
+i j mainly includes the time cost and threat cost, and
+the expression is shown as follows:
+f _costm
+i j = (1 −β) f _TimeCostm
+i j + β f _ThreatCostm
+i j (t)
+= (1 −β) tm
+j + βλ jm
+i (t) Valuei (t0) P jm
+i
+(t) (6)
+where f _TimeCostm
+i j and f _ThreatCostm
+i j represents the
+time cost of UAVi completing T m
+j and the threat cost at the
+time t, respectively, tm
+j represents the time when the UAVi
+reaches the target point until the task T m
+j
+is successfully
+executed, Valuei(t0) represents the inherent threat of T m
+j
+to UAVi, λ jm
+i
+assesses the impact of the T m
+j time-sensitive
+characteristics on UAVi threats, P jm
+i (t) represents the threat
+probability of T m
+j to UAVi at the time t, and β is the weight
+coefﬁcient.
+To ensure the enforceability of the task allocation strat-
+egy, the constraints of the UAV formation in task execution
+should be fully considered in the model construction pro-
+cess. Cons1 contains a TST time window constraint, task
+timing constraint, and UAV execution capability constraint.
+Since the task effectiveness is constrained by time con-
+ditions, the cooperative planning subsystem of the UAV
+needs to estimate the task execution time of reconnaissance,
+attack, and evaluation of the TST online based on the state
+information of the TST to dynamically plan the track and
+ensure that the UAV reaches the task point on time when the
+TSTappears.TheUAVneedstowaittoreachthetargetpoint
+in advance, and lagging to reach the target point will result
+in a low target value revenue and even a loss of opportunity
+to complete the task. Therefore, the reconnaissance, attack,
+and evaluation tasks of TSTs must be completed within the
+limited time window
+tstart
+j
+< tm
+j + tm
+j < tstart
+j
++ Dj
+(7)
+where tm
+j represents the time when the UAVi reaches the
+T m
+j task point.
+When the UAV formation executes tasks, it requires
+tactical coordination and thus is subject to time constraints.
+Military tasks require reconnaissance tasks to be completed
+before attack tasks can be executed, while evaluation tasks
+need to be executed after attack tasks are completed. The
+timing constraints of the tasks are as follows:
+
+t1
+j + t1
+j ≤t2
+j
+
+&
+
+t2
+j + t2
+j ≤t3
+j
+
+.
+(8)
+For different tasks, the attributes are different, and only
+the UAV equipped with corresponding resources can effec-
+tively perform the task. In addition, to obtain conﬂict-free
+task allocation, each task can only be executed by one
+UAV at most. Therefore, the UAV execution capability
+constraints include the UAV type and task type matching
+constraints, airborne fuel constraints, airborne ammunition
+constraints, and conﬂict-free task allocation constraints,
+which are expressed as follows:
+⎧
+⎪⎪⎪⎪⎪⎨
+⎪⎪⎪⎪⎪⎩
+type (Qi) = type
+
+qm
+j
+
+M
+j=1
+3
+m=1 V i
+
+tm
+j + tm
+j
+
+× xm
+i j ≤Li
+M
+j=1
+3
+m=1 rm
+j × xm
+i j ≤Bi
+N
+i=1 xm
+i j ≤1
+(9)
+where type (•) is the type matching function. type(Qi) =
+type(qm
+j ) represents the constraint that the reconnaissance
+aircraft performs a reconnaissance or evaluation task, and
+the ﬁghter aircraft performs an attack task.
+B.
+Path Planning Cost and Constraint Conditions
+The cooperative planning subsystem of UAVs needs to
+plan the optimal trajectory to satisfy the ﬂight performance
+requirements and cooperative constraints according to the
+task list after completing the task allocation. UAV formation
+path planning includes formation aggregation path planning
+3754
+IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS
+VOL. 59, NO. 4
+AUGUST 2023
+Authorized licensed use limited to: ZheJiang Sci-Tech University. Downloaded on March 16,2026 at 13:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+任务规划模型的适应度函数。fmij表示任务执行成
+本，该成本受约束条件Cons1的约束。该约束包括任
+务状态约束和无人机执行能力约束。disi 表示路径规
+划成本，该成本受约束条件Cons2的约束。该约束
+包括编队聚合协作约束和编队保持协作约束。
+A.任务执行成本与约束条件
+为了增强任务规划模型对应用环境的适应性，特
+别是对TST时间窗口变化的动态响应能力，任务执行
+成本是通过在约束Cons1下考虑任务收益和资源消耗
+来构建的。其表达式如下所示：
+f m
+i j = ω1 f _costm
+i j −ω2 f _valuem
+i j
+(3)
+其中 ω1, ω2 是加权系数。f_costm
+i j 表示无人机i执行
+任务Tmj的成本。f_valuem
+i j表示无人机i 执行任务
+Tmj所获得的任务收益，其表达式如下所示：
+f _valuem
+i j (t) = λm
+j (t) Valuem
+j (t0) Pm
+i j (t)
+(4)
+其中Valuem
+j (t0)表示Tmj的固有价值，该价值由
+UAVi 协同规划子系统根据作战意图和战场态势预设，
+λm
+j (t)表示时间敏感特性函数，用于评估时间敏感特性
+对任务收益的影响。在任务执行过程中，Tmj在时间
+范围t ∈[tstart
+j
+,tmost
+j
+]内随时间单调增加。在时间范围
+t ∈[tmost
+j
+,tend
+j
+]内，Tmj的数值随时间单调减少。数
+值T m
+j 在时间tmost
+j
+时达到最大。在另一时间t /∈[tstart
+j
+,
+tend
+j
+]时，Tmj的数值为0，如公式(5)所示。Pm
+i j(t)
+表示UAVi 在时间t执行T m
+j 的概率。
+λm
+j (t) =
+⎧
+⎪⎪⎪⎨
+⎪⎪⎪⎩
+μ
+
+t −tstart
+j
+
+,
+t ∈
+
+tstart
+j
+,tmost
+j
+
+, μ>0
+μ
+
+t −tmost
+j
+
++
+
+tend
+j
+−tmost
+j
+
+,
+t ∈
+
+tmost
+j
+,tend
+j
+
+, μ<0
+0,
+t /∈
+
+tstart
+j
+,tend
+j
+
+.
+(5)
+f_成本m
+i j 主要包括时间成本和威胁成本，其表达式
+如下所示：
+f _costm
+i j = (1 −β) f _TimeCostm
+i j + β f _ThreatCostm
+i j (t)
+= (1 −β) tm
+j + βλ jm
+i (t) Valuei (t0) P jm
+i
+(t) (6)
+其中f_TimeCostm
+i j 和f_ThreatCostm
+i j 分别表示无
+人机UAVi 完成任务T m
+j 的时间成本和在时间t的威
+胁成本，tm
+j 表示无人机UAVi到达目标点直到任务
+T m
+j 成功执行的时间，Valuei(t0)表示任务T m
+j 对无人
+机UAVi的固有威胁，λ jmi评估任务Tmj时间敏感
+特性对无人机UAVi威胁的影响，P jmi(t)表示威胁
+在时间t下T m
+j 到UAVi 的概率，且 β 是权重系数。
+为了确保任务分配策略的可执行性，在模型构建
+过程中应充分考虑无人机编队在任务执行中的约束。
+Cons1包含TST时间窗口约束、任务时序约束和无
+人机执行能力约束。
+由于任务的有效性受到时间条件的制约，无人机
+的协同规划子系统需要根据目标系统（TST）的状态
+信息在线估算侦察、攻击和评估任务的执行时间，以
+动态规划航迹，并确保无人机在TST出现时准时到达
+任务点。无人机需要提前到达目标点，而到达目标点
+滞后将导致目标价值收益低，甚至失去完成任务的机
+会。因此，TST的侦察、攻击和评估任务必须在有限
+的时间窗口内完成。
+tstart
+j
+< tm
+j + tm
+j < tstart
+j
++ Dj
+(7)
+其中tm
+j 表示无人机i 到达T m
+j 任务点的时间。
+当无人机编队执行任务时，它需要战术协调，因
+此受到时间限制。军事任务要求在执行攻击任务之前
+完成侦察任务，而评估任务需要在攻击任务完成后执
+行。任务的时间限制如下：
+
+t1
+j + t1
+j ≤t2
+j
+
+&
+
+t2
+j + t2
+j ≤t3
+j
+
+.
+(8)
+对于不同的任务，属性是不同的，只有配备相应
+资源的无人机才能有效地执行任务。此外，为了获得
+无冲突的任务分配，每个任务最多只能由一架无人机
+执行。因此，无人机执行能力约束包括无人机类型与
+任务类型的匹配约束、空中燃料约束、空中弹药约束
+以及无冲突任务分配约束，其表达如下：
+⎧
+⎪⎪⎪⎪⎪⎨
+⎪⎪⎪⎪⎪⎩
+type (Qi) = type
+
+qm
+j
+
+M
+j=1
+3
+m=1 V i
+
+tm
+j + tm
+j
+
+× xm
+i j ≤Li
+M
+j=1
+3
+m=1 rm
+j × xm
+i j ≤Bi
+N
+i=1 xm
+i j ≤1
+(9)
+其中type(•)是匹配类型的函数。type(Qi) =t
+ype(qm
+j )表示侦察机执行侦察或评估任务，战斗机执
+行攻击任务的约束。
+B.路径规划成本与约束条件
+无人机的协同规划子系统需要在完成任务分配后，
+根据任务清单规划最优轨迹，以满足飞行性能要求和
+协同约束。无人机编队路径规划包括编队聚合路径规
+划
+3754
+《IEEE航天与电子系统学报》第59卷第4期8月2日
+023
+授权许可的使用仅限于：浙江科技大学。于2026年3月16日13:16:53UTC从IEEEXplore下载。适用限制。
+
+
+===== PAGE 6 =====
+and formation holding path planning. Formation aggrega-
+tion path planning means that a group of UAVs perform
+assigned tasks from different starting points and reach the
+corresponding positions in the speciﬁed assembly area at
+the same time after all the tasks are coordinated to achieve
+the expected formation. When the UAVs in the formation
+completetheassemblyandgeneratetheexpectedformation,
+the formation enters the formation holding ﬂight stage, that
+is, the entire formation ﬂies to the destination with a given
+formation along the planned path. The expression disi is
+shown as follows:
+disi = d_alliancei + d_taski (i)
++ d_assemblei + d_formationi
+(10)
+where d_alliancei represents the ﬂight path that UAVi needs
+to ﬂy during coalition formation, i represents a list of
+tasks the UAVi needs to perform, d_taski(i) represents
+the ﬂight path required by the UAVi to perform the task
+list i, d_assemblei represents the ﬂight path that the UAVi
+needs to reach the assembly point after completing the last
+task, d_formationi represents the ﬂight path that the UAVi
+needs to ﬂy along from entering the formation holding ﬂight
+phase to reaching the target endpoint.
+To enhance the adaptability of the mission planning
+model to the application objects. The constraints of the
+UAV motion characteristics should be fully considered in
+the model construction process. Cons2 contains a forma-
+tion aggregation collaborative constraint and a formation
+holding collaborative constraint.
+Constrained by UAV formation aggregation coordina-
+tion,theplannedformationaggregationpathneedstoensure
+that the time at which the UAV reaches the corresponding
+position in the assembly area is consistent, as shown in
+d_alliancei + d_taski () + d_assemblei
+V i
+= d_allianceg + d_taskg () + d_assembleg
+V g
+(11)
+where i ̸= g ∀(i, g) ∈U.
+The UAVi tracking collaborative planning subsystem
+performs tasks for its planned formation aggregation path
+to realize multi-UAV cooperative reconnaissance, attack,
+and evaluation of TSTs. It is assumed that the UAVs in the
+formation are equipped with the same autopilot to control
+the speed, course, and ﬂight height of the UAVs. The motion
+model of a single UAV in the two-dimensional plane can be
+characterized as⎧
+⎪⎨
+⎪⎩
+˙xi = V i cos ϕi + V w cos ϕw
+˙yi = V i sin ϕi + V w sin ϕw
+˙ϕi = φi
+(12)
+wherePi = (xi, yi)T ,ϕi representsthepositionandcourseof
+UAVi intheinertialcoordinatesystemℵ.V i andφi represent
+the speed control quantity and course angle velocity con-
+trol quantity of UAVi, respectively, which are constrained
+by the controller as follows: 0 < V min ≤V i ≤V max and
+Fig. 2.
+UAV path tracking motion model.
+φi ≤|φmax|. V w and ϕw represent the wind speed and wind
+direction, respectively. It is assumed that the wind speed is
+bounded and the UAVs in the formation are subject to the
+same disturbance, that is, V w ≤V wmax.
+To accurately describe the error of UAVi when tracking
+Pathi, a single UAV path tracking motion model based on
+the Frenet–Serret coordinate system is established by using
+the idea of a virtual target point, as follows:
+⎧
+⎪⎨
+⎪⎩
+esi = (xi −˜xi) cos ˜ϕi +
+
+yi −˜yi
+
+sin ˜ϕi
+edi = −(xi −˜xi) sin ˜ϕi +
+
+yi −˜yi
+
+cos ˜ϕi
+ψi = ¯ϕi −¯ϕdi
+(13)
+where ˜Pi = (˜xi, ˜yi)T represents the virtual target point of
+Pathi in the Frenet–Serret coordinate system. The Frenet–
+Serret coordinate system of Pathi moves with the virtual
+target point ˜Pi, and its X axis is the tangent of Pathi at
+the point ˜Pi. ˜ϕi represents the rotation angle of the Frenet–
+Serret coordinate system of Pathi relative to the inertial
+coordinate system ℵ. ¯ϕdi represents the expected value of ¯ϕi,
+and ¯ϕi = ϕi −˜ϕi. 
+i = (esi, edi, ψi)T represents the error of
+UAVi tracking Pathi, and ei = (esi, edi)T and ψi represent
+the position error and course error, respectively, so that as
+
+i →0, UAVi tracks the virtual target point ˜Pi on Pathi in
+real-time to realize the path tracking of a single UAV, as
+shown in Fig. 2(a).
+Constrained by UAV formation holding coordination,
+the planned formation holding path needs to ensure that the
+UAVs enter the formation maintenance ﬂight phase, that
+is, after completing the task, the UAV in the formation
+reaches the formation assembly point to generate the ex-
+pected formation and then needs to maintain the formation
+and ﬂy cooperatively to the target endpoint. To maintain the
+formation of the UAVs, the UAV formation motion model
+is established by coordinating the update rate of the virtual
+target point of the UAV on its expected path, as follows:
+˜Pg
+
+ξg (t)
+= ˜Pi (ξi (t)) + d · n (ξi (t))
+s.t.
+
+dsi(t)
+dξi(t) <
+
+ai,min, ai,max
+
+0 < ai,min < ai,max < +∞
+(14)
+where si(t) represents the arc length parameter of Pathi at
+the time t, ξi(t) represents the collaborative parameter of
+the virtual target point ˜Pi on Pathi at the time t, and n(ξi(t))
+ZHANG ET AL.: DYNAMIC MISSION PLANNING ALGORITHM FOR UAV
+3755
+Authorized licensed use limited to: ZheJiang Sci-Tech University. Downloaded on March 16,2026 at 13:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+及队形保持路径规划。队形聚集路径规划是指一组无
+人机从不同的起点执行分配的任务，并在所有任务协
+调完成后，同时到达指定集结区的相应位置，以实现
+预期的队形。当队形中的无人机完成集结并生成预期
+队形后，队形进入队形保持飞行阶段，即整个队形按
+照规划路径以给定队形飞向目标地点。表达式disi 如
+下所示：
+disi = d_alliancei + d_taski (i)
++ d_assemblei + d_formationi
+(10)
+其中d_alliancei 表示无人机在联盟形成过程中需要
+飞行的航线，i 表示无人机需要执行的任务列表，d_
+taski(i)表示无人机为执行任务列表i, 所需的航线，
+d_assemblei 表示无人机在完成最后一个任务后需要
+到达集结点的航线，d_formationi 表示无人机从进
+入编队保持飞行阶段到到达目标终点所需飞行的航线。
+为了增强任务规划模型对应用对象的适应性，应
+在模型构建过程中充分考虑无人机运动特性的约束。
+Cons2包含一个编队聚合协作约束和一个编队保持协
+作约束。
+由于受到无人机编队聚合协调的限制，规划的编
+队聚合路径需要确保无人机到达集结区相应位置的时
+间一致，如图所示
+d_alliancei + d_taski () + d_assemblei
+V i
+= d_allianceg + d_taskg () + d_assembleg
+V g
+(11)
+我在哪里 ̸= g ∀(i,g) ∈U。
+无人机i 跟踪协同规划子系统执行其计划的编队
+聚合路径任务，以实现多无人机协同侦察、攻击和对
+TST的评估。假设编队中的无人机都配备相同的自动
+驾驶仪来控制无人机的速度、航向和飞行高度。单个
+无人机在二维平面上的运动模型可以表示为
+⎧
+⎪⎨
+⎪⎩
+˙xi = V i cos ϕi + V w cos ϕw
+˙yi = V i sin ϕi + V w sin ϕw
+˙ϕi = φi
+(12)
+其中Pi =(xi,yi)T,ϕi表示UAVi在惯性坐标系ℵ中的
+位置和航向。V i和φi分别表示UAVi的速度控制量
+和航向角速度控制量，这些控制量受到控制器如下约
+束：0 <V min ≤Vi ≤V最大值和
+图2.无人机路径跟踪运动模型。
+φi ≤|φmax|。Vw 和 ϕw 分别表示风速和风向。假设风
+速是有界的，且编队中的无人机受到相同的扰动，即
+Vw ≤Vwmax。
+为了准确描述无人机i 在跟踪路径i时的误差，基
+于弗雷内–塞雷坐标系，利用虚拟目标点的思想建立了
+单无人机路径跟踪运动模型，如下所示：
+⎧
+⎪⎨
+⎪⎩
+esi = (xi −˜xi) cos ˜ϕi +
+
+yi −˜yi
+
+sin ˜ϕi
+edi = −(xi −˜xi) sin ˜ϕi +
+
+yi −˜yi
+
+cos ˜ϕi
+ψi = ¯ϕi −¯ϕdi
+(13)
+其中˜Pi = (˜xi, ˜yi)T 表示在Frenet–Serret坐标系中路
+径i 的虚拟目标点。路径i 的Frenet–Serret坐标系随虚
+拟目标点˜Pi移动，其X轴为路径i 在点˜Pi处的切线。
+˜ϕi 表示路径i的Frenet–Serret坐标系相对于惯性坐标
+系ℵ的旋转角。¯ϕdi表示¯ϕi和¯ϕi = ϕi −˜ϕi的期望值。
+
+i =(esi,edi, ψi)T表示无人机i跟踪路径i的误差，而e
+i =(esi,edi)T和ψi分别表示位置误差和航向误差，因
+此，随着
+i →0，无人机i 实时跟踪路径i 上虚拟目标
+点˜Pi ，以实现单无人机的路径跟踪，如图2(a)所示。
+受无人机编队保持协调的限制，规划的编队保持
+路径需要确保无人机进入编队维护飞行阶段，即在完
+成任务后，编队中的无人机到达编队集合点以生成预
+期编队，然后需要保持编队并协同飞行到目标终点。
+为了保持无人机的编队，通过协调无人机在其期望路
+径上虚拟目标点的更新率，建立无人机编队运动模型，
+如下所示：
+˜Pg
+
+ξg (t)
+= ˜Pi (ξi (t)) + d · n (ξi (t))
+s.t.
+
+dsi(t)
+dξi(t) <
+
+ai,min, ai,max
+
+0 < ai,min < ai,max < +∞
+(14)
+其中si(t)表示路径i 在时间t的弧长参数，ξi(t)表示虚拟目
+标点 ˜Pi在路径i上的协作参数在时间t，且n(ξi(t))
+张等：无人机动态任务规划算法
+3755
+授权许可使用仅限于：浙江
+g科技大学。下载于2026年3月16日13:1
+来自IEEEXplore的6:53UTC。适用限制。
+
+
+===== PAGE 7 =====
+Fig. 3.
+Particle coding schematic.
+represents the unit normal vector at the virtual target point
+˜Pi on Pathi at time t. If ξg(t) = ξi(t), the virtual target point
+˜Pg of UAVg and the virtual target point ˜Pi of UAVi form
+the expected formation at the time t, as shown in Fig. 2(c),
+such that as ξg(t) −ξi(t) →0, virtual target points on the
+expected path of each UAV are coordinated to maintain the
+UAV formation.
+V.
+SOLVING UAV FORMATION MISSION PLANNING
+MODEL
+In the standard PSO algorithm, the position vector of
+each particle corresponds to a potentially feasible solution
+to the optimization problem, and multiple particles form a
+population. In the process of particle population evolution,
+each particle updates its velocity vector and position vector
+by learning the global optimal particle. However, when the
+global optimal particle falls into the local optimum, the
+entire population particle will also fall into the local opti-
+mum,leadingtoprematureconvergenceofthealgorithm.To
+improve the diversity of the population and avoid premature
+convergence, the PSO algorithm is improved. First, the
+mapping relationship between the position vector and the
+solution of the mission planning model is established by a
+speciﬁc particle coding method, and the feasible particles
+are generated by modifying the position vector based on the
+saturation mechanism. Second, by modifying the particle
+speed and position updating formula, the particles update
+their speeds and positions through learning objects. Finally,
+the search direction adjustment mechanism is introduced
+to judge the evolution state of the learning object, and the
+search direction of the particle is adjusted at the appropriate
+time to improve the diversity of the population. At the same
+time, the cooperative evolution strategy is introduced to
+select the learning object competitively, and the learning
+object is dynamically generated and updated in the iterative
+process of the algorithm to avoid particles falling into local
+optima.
+A.
+Particle Coding and Constraint Processing
+The position vector of the particles in the improved PSO
+algorithm is coded based on the real number vector, and
+then a potential solution of the mission planning model is
+decoded. Assuming that 3M tasks are assigned to n UAVs
+for collaborative execution, the position vector of each
+particle is coded into a one-dimensional vector with a size
+of 1 × 3M, as shown in Fig. 3. The dimension of the vector
+group is divided by 3. If it can be divided, the quotient is
+taken to represent the corresponding TST numbering, and
+the remainder plus three is taken to represent the types of
+tasks in the TST. If it is not divisible, the quotient plus one is
+taken to represent the corresponding TST numbering. The
+remainder is used to represent the type of task in the TST.
+For example, the ﬁfth dimension of the vector group cannot
+be divided by 3, the quotient plus 1 is equal to 2, and the
+remainder is equal to 2. Thus, it represents the task T 2
+2 . The
+sixth dimension of the vector group can be divided by 3, the
+quotient is equal to 2, and the remainder plus 3 is equal to 3.
+Thus,itrepresentsthetaskT 3
+2 .LetX e = (Xe1, Xe2, · · · Xe3M)
+represent the position vector of the particle e and Xed repre-
+sent the element X e, e = 1, 2, . . . , N, d = 1, 2, . . . , 3M. In
+the particle coding process, the integer part In(Xed) of the
+element Xed is used to represent the corresponding UAV
+numbering, and the decimal part Fr(Xed) represents the
+priority of the task executed by the corresponding UAV.
+The smaller the decimal Fr(Xed) of the element Xed is, the
+higher the priority of the task executed by the corresponding
+UAV is.
+For example, for a UAV formation mission planning
+model with four TSTs, two reconnaissance aircraft, and
+two ﬁghter aircraft, the position vector of each particle
+in the improved PSO algorithm is a 1-D vector, that
+is, 1 × 12. After a certain number of iterations, it was
+assumed that the position vector of the particle e was
+[1.72, 4.81, 1.93, 2.23, 4.37, 2.33, 2.42, 3.58, 2.65, 1.08,
+3.14, 1.26],
+and
+the
+elements
+in
+the
+ﬁrst,
+third,
+tenth,
+and
+twelfth
+dimensions
+of
+the
+particle
+po-
+sition vector had integer parts equal to 1, that is,
+In(Xe1)= In(Xe3)= In(Xe10)= In(Xe12) = 1.
+Therefore,
+UAV1 was assigned to perform T 1
+1 , T 3
+1 , T 1
+4 , and T 3
+4 , because
+the decimal parts of the elements in the ﬁrst dimension,
+third dimension, tenth dimension, and twelfth dimension
+of the particle position vector were 0.72, 0.93, 0.08,
+and 0.26, respectively. Since 0.08 < 0.26 < 0.72 < 0.93,
+that
+is,
+Fr(Xe10) < Fr(Xe12) < Fr(Xe1) < Fr(Xe3),
+the
+task execution sequence of UAV1 was T 1
+4 →T 3
+4 →
+T 1
+1 →T 3
+1 ,
+where
+‘→’
+represents
+the
+sequence
+in
+which the task is executed by the corresponding UAV.
+Similarly,
+In(Xe4)= In(Xe6)= In(Xe7)= In(Xe9) = 2,
+Fr(Xe4) < Fr(Xe6) < Fr(Xe7) < Fr(Xe9),
+and
+thus,
+the
+task execution sequence of UAV2 was T 1
+2 →T 3
+2 →
+T 1
+3 →T 3
+3 ;
+n(Xe8)= In(Xe11) = 3,
+Fr(Xe11) < Fr(Xe8),
+and thus, the task execution sequence of UAV3 was
+T 2
+4 →T 2
+3 ;
+n(Xe2)= In(Xe5) = 4,
+Fr(Xe5) < Fr(Xe2),
+and thus, the task execution sequence of UAV4 was
+T 2
+2 →T 2
+1 .
+In the process of constructing the mission planning
+model, the constraints in (1) are fully considered to ensure
+the adaptability of the model to the application environ-
+ment and the application object. In addition, to ensure that
+the position vector of each particle in the improved PSO
+algorithm is within the speciﬁed deﬁnition domain, the
+constraintcondition1 ≤e ≤N, ∀e ∈{1, 2, . . . , N}mustbe
+satisﬁed. Therefore, the position vector of the particle is
+modiﬁed based on the saturation mechanism to generate
+feasible particles. Equation (15) shows that if the integer
+part of Xed exceeds N or is less than 1, the integer part of
+Xed is modiﬁed, and at the same time, the decimal part of
+Xed is retained to ensure that the execution order of each
+3756
+IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS
+VOL. 59, NO. 4
+AUGUST 2023
+Authorized licensed use limited to: ZheJiang Sci-Tech University. Downloaded on March 16,2026 at 13:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+图3.粒子编码示意图。
+表示在时间t时路径i 上虚拟目标点˜Pi 处的单位法向量。
+如果 ξg(t) = ξi(t)，UAVg 的虚拟目标点˜Pg 与UAVi 
+的虚拟目标点 ˜Pi 在时间t形成期望的编队，如图
+2(c)所示，使得当ξg(t) −ξi(t) →0时，每个UAV期望
+路径上的虚拟目标点协调以维持UAV编队。
+五、无人机编队任务规划模型求解
+在标准的粒子群优化（PSO）算法中，每个粒子
+的位矢对应于优化问题的一个潜在可行解，多个粒子
+组成一个群体。在粒子群进化的过程中，每个粒子通
+过学习全局最优粒子来更新其速度矢量和位矢。然而，
+当全局最优粒子陷入局部最优时，整个群体的粒子也
+会陷入局部最优，导致算法早熟收敛。为了提高群体
+的多样性并避免早熟收敛，PSO算法进行了改进。首
+先，通过特定的粒子编码方法建立位矢与任务规划模
+型解的映射关系，并通过基于饱和机制修改位矢生成
+可行粒子。其次，通过修改粒子速度和位置更新公式，
+粒子更新
+A.粒子编码与约束处理
+在改进的PSO算法中，粒子的位矢基于实数向量
+进行编码，然后解码为任务规划模型的一个潜在解。
+假设将3M个任务分配给n架无人机协同执行，每个粒
+子的位矢被编码为一个大小为1 × 3M的一维向量，如
+图3所示。向量组的维数按3进行划分。如果能够整除，
+则取商表示相应的TST编号，余数加三表示TST中的
+任务类型。如果不能整除，则商加一表示
+被用来表示相应的TST编号。余数用于表示TST中
+任务的类型。例如，向量组的第五维不能被3整除，
+商加1等于2，余数等于2。因此，它表示任务T 2
+2 。
+向量组的第六维可以被3整除，商等于2，余数加3
+等于3。因此，它表示任务T32。令X e =(Xe1,Xe2,
+· · ·Xe3M)表示粒子e的位置向量，Xed 表示元素Xe，
+e = 1,2,...,N,d = 1,2,...,3M。在粒子编码过程
+中，元素Xed 的整数部分In(Xed)用于表示相应
+UAV的编号，而小数部分Fr(Xed)表示相应UAV执
+行任务的优先级。元素Xed 的小数部分Fr(Xed)越小，
+相应UAV执行任务的优先级就越高。
+例如，对于一个具有四个TST、两架侦察机和两
+架战斗机的无人机编队任务规划模型，改进PSO算法
+中每个粒子的位矢是一个一维向量，即1 × 12。经过一
+定次数的迭代后，假设粒子e的位矢为
+[1.72, 4.81, 1.93, 2.23, 4.37, 2.33, 2.42, 3.58, 2.65, 1.08,
+3.14，1.26]，以及粒子位置向量中第一、第三、第十
+和第十二维的元素的整数部分均等于1，即In(Xe1)=
+In(Xe3)= In(Xe10)=In(Xe12) = 1。因此，UAV1 被分配
+执行T 1
+1 , T31、T14和T34，因为粒子位置向量中第一
+维、第三维、第十维和第十二维元素的小数部分分别
+为0.72、0.93、0.08和0.26。由于
+0.08 < 0.26 < 0.72 < 0.93，即Fr(Xe10) < Fr(Xe12) <
+Fr(Xe1) <Fr(Xe3)，UAV1 的任务执行顺序为T 1
+4 →T
+3
+4 →T 1
+1 →T31，其中‘→’表示对应无人机执行任
+务的顺序。类似地，In(Xe4)= In(Xe6)= In(Xe7)=
+In(Xe9) = 2，Fr(Xe4) <Fr(Xe6) < Fr(Xe7) <Fr(Xe9)，
+因此UAV2 的任务执行顺序为T 1
+2 →T 3
+2 →T 1
+3 →T 3
+3 ；
+n(Xe8)= In(Xe11) = 3，Fr(Xe11) < Fr(Xe8)
+在构建任务规划模型的过程中，充分考虑了(1)中
+的约束条件，以确保模型对应用环境和应用对象的适
+应性。此外，为了确保改进的粒子群优化算法中每个
+粒子的位置向量在指定的定义域内，必须满足约束条
+件1 ≤e ≤N ∀e ∈{1, 2, . . . ,N}。因此，基于饱和机
+制对粒子的位置向量进行修正，以生成可行的粒子。
+方程(15)表明，如果Xed 的整数部分超过N或小于1，
+则对Xed 的整数部分进行修正，同时保留Xed 的小数
+部分，以确保每个粒子的执行顺序
+3756
+IEEE航空航天与电子系统汇刊第59卷第4期2023年8月
+授权许可的使用仅限于：浙江科技大学。于2026年3月16日13:16:53UTC从IEEEXplore下载。适用限制。
+
+
+===== PAGE 8 =====
+task is not affected
+Xed =
+⎧
+⎨
+⎩
+1+Fr (Xed)
+if In (Xed) < 1
+N+Fr (Xed)
+if In (Xed) > N
+Xed
+otherwise
+.
+(15)
+B.
+Particle Swarm Optimization Algorithm Based on
+Competitive Co-Evolution
+In a 3M-dimensional search space, a population consists
+of N particles, and the velocity and position updating rules
+of each particle are shown as follows:
+Y k+1
+e
+= ωY k
+e + c1r1
+
+Lk
+e −X k
+e
+
++ c2r2
+
+gBestk −X k
+e
+
+X k+1
+e
+= X k
+e + Y k+1
+e
+(16)
+where Y k
+e = (Y k
+e1,Y k
+e2, · · ·Y k
+e3M), X k
+e = (X k
+e1, X k
+e2, · · · X k
+e3M)
+represent the velocity vector and position vector of the
+particle e at the kth iteration, respectively, k = 1, 2, . . . , K,
+K represents the maximum number of iterations, gBestk
+represents the optimal value of the population searched by
+the entire particle population until the kth iteration, r1 and
+r2 represent random numbers uniformly distributed in the
+[0, 1] interval, c1 and c2 represent acceleration factors, Lk
+e
+represents the learning objectives of particle e at the kth iter-
+ation, and the evolution state of the learning object is judged
+by the search direction adjustment mechanism, as shown in
+(17) and (18). Learning objects are competitively selected
+through co-evolution strategies, as shown in (19)–(21)
+P_Ladjust
+e
+= exp (τe) −1
+exp (5) −1
+(17)
+where P_Ladjust
+e
+represents the learning object adjustment
+probability and τe represents the number of evolutionary
+stagnations of particle e. Before falling into the local opti-
+mum, the individual optimum pBeste of particle e is con-
+stantly updated, that is, the ﬁtness value J(pBeste) of pBeste
+will decrease, but after falling into the local optimum, the
+individual optimum pBeste of the particle e will evolve into
+stagnation, as shown in
+J
+
+pBestk
+e
+
+−J
+
+pBestk+1
+e
+
+= 0.
+(18)
+The number of times that (18) is established is the value
+of τe. The larger the value of τe is, the greater the probability
+of particles falling into local optima will be. When P_Ladjust
+e
+is greater than the random number rand() uniformly dis-
+tributed in [0, 1], the particle e will stop learning from its
+currentlearningobject,thatis,theoldlearningobjectcannot
+lead the evolution of particles, and new learning objects
+need to be generated to avoid particles falling into local
+optima.
+Two particle individual optimal values pBesto and
+pBestr are randomly selected from the population, and the
+particle individual optimal value is competitively selected
+according to the rules of the binary championship to form
+the learning object Lk
+e.
+Lk
+e =
+
+pBestk
+o + Gaussian (σ ) if J
+
+pBestk
+o
+
+< J
+
+pBestk
+r
+
+pBestk
+r + Gaussian (σ ) if J
+
+pBestk
+o
+
+> J
+
+pBestk
+r
+
+(19)
+where (o, r) ∈(1, 2, · · · N), e ̸= o ̸= r, and Gaussian(σ )
+represents the random bias, which is generated according to
+the Gaussian distribution with a standard deviation σ. The
+expression is as follows:
+σ =
+
+1
+N
+N
+e=1 pBestk
+e −pBestk
+mean
+(20)
+where pBestk
+mean represents the average of all individual
+particle optimal values until the kth iteration. This ensures
+the quality of the learning object Lk
+e, which also retains the
+structure of the individual optimal value pBestk
+e of some
+particles e.
+Due to the competitive relationship between old and
+new learning objects, to select better learning objects, com-
+petitiveness is deﬁned as the degree to which the learning
+objects lead the evolution of particles, and the expression is
+shown as follows:
+Lk
+e =
+⎧
+⎪⎪⎪⎨
+⎪⎪⎪⎩
+Lk,new
+e
+if CompetitivenessT 
+Lk,new
+e
+
+−CompetitivenessT 
+Lk,old
+e
+
+> 0
+Lk,old
+e
+if CompetitivenessT 
+Lk,new
+e
+
+−CompetitivenessT 
+Lk,old
+e
+
+< 0
+(21)
+whereT representsthepredictionperiod.Ifthenewlearning
+object is more competitive than the old learning object,
+which means that the new learning object is more suitable
+for leading particle evolution, the new learning object will
+replace the old learning object and vice versa.
+According to the above algorithm description, pseu-
+docodeofPSOalgorithmbasedoncompetitiveco-evolution
+as given in Table I.
+VI.
+SIMULATION ANALYSIS
+A.
+Simulation Scene Assumption and Parameter Setting
+The MATLAB R2019a software was used to simulate
+thecooperativeexecutionoftime-sensitivetasksbyUAVsin
+combat scenarios with three different scales. The effective-
+ness of the proposed multi-UAV cooperative time-sensitive
+task dynamic programming algorithm was veriﬁed by ex-
+periments. The experimental environment and assumptions
+are as follows.
+1) Scenario 1 is a small-scale mission planning prob-
+lem: UAV formation consists of four UAVs, UAV1,
+and UAV2 are scout aircrafts, UAV3 and UAV4
+are ﬁghter aircrafts, UAV3 is equipped with ﬁve
+pieces of ammunition, UAV4 is equipped with
+three ammunition. The initial position of UAV1,
+UAV2, UAV3, and UAV4 are (7, 7, 10) km, (5,
+5, 10) km, (3, 3, 10) km, and (1, 1, 10) km, re-
+spectively, and the cruise speed is 0.5 km/s. There
+are four TSTs in the battleﬁeld environment. Each
+ZHANG ET AL.: DYNAMIC MISSION PLANNING ALGORITHM FOR UAV
+3757
+Authorized licensed use limited to: ZheJiang Sci-Tech University. Downloaded on March 16,2026 at 13:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+任务不受影响
+Xed =
+⎧
+⎨
+⎩
+1+Fr (Xed)
+if In (Xed) < 1
+N+Fr (Xed)
+if In (Xed) > N
+Xed
+otherwise
+.
+(15)
+B.基于竞争共演化的粒子群优化算法
+在一个3M维的搜索空间中，种群由N个粒子组成，
+每个粒子的速度和位置更新规则如下所示：
+Y k+1
+e
+= ωY k
+e + c1r1
+
+Lk
+e −X k
+e
+
++ c2r2
+
+gBestk −X k
+e
+
+X k+1
+e
+= X k
+e + Y k+1
+e
+(16)
+其中Yke =(Yke1,Yke2, · · ·Yke3M)、Xk
+e =(X
+ke1,Xke2, · · ·Xke3M)分别表示第k次迭代时粒子
+e的速度向量和位置向量，k= 1,2,...,K，K表示最
+大迭代次数，gBestk表示到第k次迭代为止整个粒子
+群搜索到的群体最优值，r1 和r2 表示在[0, 1] 区间
+均匀分布的随机数，c1 和c2 表示加速因子，Lk
+e表示
+第k次迭代时粒子e的学习目标，通过搜索方向调整
+机制判断学习目标的演化状态，如(17)和(18)所示。
+学习目标通过协同进化策略进行竞争选择，如(19)–
+(21)所示。
+P_Ladjust
+e
+= exp (τe) −1
+exp (5) −1
+(17)
+其中P_Ladjust
+e
+表示学习对象调整概率，τe 表示粒子
+e的进化停滞次数。在陷入局部最优之前，粒子e的
+个体最优pBeste 会不断更新，即pBeste的适应度值
+J(pBeste)会下降，但在陷入局部最优之后，粒子e的
+个体最优pBeste 将演变为停滞，如图所示
+J
+
+pBestk
+e
+
+−J
+
+pBestk+1
+e
+
+= 0.
+(18)
+(18)被建立的次数就是 τe的值。τe 的值越大，
+粒子落入局部最优的概率就越大。当P_Ladjust
+e
+如果大于随机数rand()，该随机数在 [0, 1], 中均匀
+分布，粒子e将停止从其当前的学习对象中学习，也
+就是说，旧的学习对象无法引导粒子的进化，需要生
+成新的学习对象以避免粒子陷入局部最优。
+从群体中随机选择两个粒子个体最优值pBesto
+和pBestr ，并根据二进制锦标赛的规则竞争性地选择
+粒子个体最优值以形成
+学习对象Lk
+e。
+Lk
+e =
+
+pBestk
+o + Gaussian (σ ) if J
+
+pBestk
+o
+
+< J
+
+pBestk
+r
+
+pBestk
+r + Gaussian (σ ) if J
+
+pBestk
+o
+
+> J
+
+pBestk
+r
+
+(19)
+其中(o,r) ∈(1,2, · · · N),e ̸= o ̸= r，并且
+Gaussian(σ )表示随机偏差，其根据标准差为 σ的
+高斯分布生成。表达式如下：
+σ =
+
+1
+N
+N
+e=1 pBestk
+e −pBestk
+mean
+(20)
+其中pBestk
+mean 表示直到第k次迭代为止所有个体粒
+子最优值的平均值。这确保了学习对象Lk
+e的质量，同
+时也保留了一些粒子e的个体最优值pBestk
+e 的结构。
+由于旧学习对象与新学习对象之间的竞争关系，
+为了选择更好的学习对象，竞争力被定义为学习对象
+引导粒子演化的程度，其表达式如下所示：
+Lk
+e =
+⎧
+⎪⎪⎪⎨
+⎪⎪⎪⎩
+Lk,new
+e
+if CompetitivenessT 
+Lk,new
+e
+
+−CompetitivenessT 
+Lk,old
+e
+
+> 0
+Lk,old
+e
+if CompetitivenessT 
+Lk,new
+e
+
+−CompetitivenessT 
+Lk,old
+e
+
+< 0
+(21)
+其中T表示预测周期。如果新的学习对象比旧的学习
+对象更具竞争力，这意味着新的学习对象更适合引导
+粒子演化，新的学习对象将取代旧的学习对象，反之
+亦然。
+根据上述算法描述，基于竞争协同进化的PSO算
+法伪代码如表I所示。
+VI.仿真分析
+A.仿真场景假设与参数设置
+使用MATLABR2019a软件模拟无人机在三种不
+同规模的作战场景中协同执行时间敏感任务。通过实
+验验证了所提出的多无人机协同时间敏感任务动态规
+划算法的有效性。实验环境和假设如下。
+1）场景1是一个小规模任务规划问题：无人机编
+队由四架无人机制成，UAV1,和UAV2 是侦察飞
+机，UAV3 和UAV4 是战斗机，UAV3 配备了
+五枚弹药，UAV4 配备了三枚弹药。UAV1,、
+UAV2,、UAV3, 和UAV4 的初始位置分别是(7,
+7,10)公里、(5,5,10)公里、(3,3,10)公里和(1,
+1,10)公里，巡航速度为0.5公里/秒。战场环境中
+有四个TST。每个
+张等：无人机动态任务规划算法
+3757
+授权许可使用仅限于：Zhe
+江科技大学。于2026年3月16日下载于
+13:16:53UTC来自IEEEXplore。适用限制。
+
+
+===== PAGE 9 =====
+TABLE I
+Pseudocode of Particle Swarm Optimization Algorithm Based on
+Competitive Co-Evolution
+TST contains three types of tasks, namely recon-
+naissance, attack and evaluation. Then the task set
+is {T 1
+1 , T 2
+1 , T 3
+1 , T 1
+2 , T 2
+2 , T 3
+2 , T 1
+3 , T 2
+3 , T 3
+3 , T 1
+4 , T 2
+4 , T 3
+4 },
+and their position coordinates are (28, 17, 0) km, (31,
+14, 0) km, (34, 20, 0) km, (30, 57, 0) km, (33, 54,
+0) km, (36, 60, 0) km, (72, 42, 0) km, (75, 39, 0) km,
+(78, 45,0) km, (87, 38, 0) km, (90, 35, 0) km, and
+(93,41,0) km, respectively. The designated locations
+in the assembly area are (84, 61, 10) km, (86, 63,
+10) km, (88, 65, 10) km, and (90, 67, 10) km, respec-
+tively. The corresponding positions in the speciﬁed
+assembly area are (68, 82, 10) km, (70, 84, 10) km,
+(72, 86, 10) km, and (74, 88, 10) km, respectively.
+The intrinsic value of each task is 50.
+2) Scenario 2 is a medium-scale mission planning prob-
+lem: UAV formation consists of four UAVs, UAV1,
+and UAV2 are scout aircrafts, UAV3 and UAV4 are
+ﬁghter aircrafts, UAV3 is equipped with three ammu-
+nition, UAV4 is equipped with four ammunition. The
+initialpositionofUAV1,UAV2,UAV3,andUAV4 are
+(7, 7, 10) km, (5, 5, 10) km, (3, 3, 10) km, and (11,
+10) km, respectively, and the cruise speed is 0.5 km/s.
+There are seven TSTs in the battleﬁeld environment.
+The position coordinates are (28, 17, 0) km, (31, 14,
+0) km, (34, 20, 0) km, (30, 57, 0) km, (33, 54, 0) km,
+(36, 60, 0) km, (72, 42, 0) km, (75, 39, 0) km, (78, 45,
+0) km, (87, 38, 0) km, (90, 35, 0) km, (93, 41, 0) km,
+(51, 23, 0) km, (54, 20, 0) km. (57, 26, 0) km, (80, 12,
+0) km, (83, 9, 0) km, (86, 15, 0) km, (36, 80, 0) km,
+(39, 77, 0) km, and (42, 83, 0) km, respectively. The
+initial value of each task is 50.
+3) Scenario3isalarge-scalemissionplanningproblem:
+UAV formation consists of ﬁve UAVs, UAV1, and
+UAV2 are scout aircrafts, UAV3, UAV4, and UAV5
+are ﬁghter aircrafts, UAV3 is equipped with three
+ammunition, UAV4 is equipped with four ammuni-
+tion and UAV5 is equipped with ﬁve ammunition.
+The initial positions of UAV1, UAV2, UAV3, UAV4
+and UAV5 are (99, 10) km, (77,10) km, (5, 5, 10) km,
+(3, 3, 10) km, and (1, 1, 10) km, respectively. Cruise
+speed is 0.5 km/s; there are 12 TSTs in the battle-
+ﬁeld environment, and the position coordinates are
+(28,17,0) km, (31, 14, 0) km, (34, 20, 0) km, (30, 57,
+0) km, (33, 54, 0) km, (36, 60, 0) km, (72, 42, 0) km,
+(75, 39, 0) km, (78, 45, 0) km, (87, 38, 0) km, (90,
+35, 0) km, (93, 41, 0) km, (51, 23, 0) km, (54, 20,
+0) km. (57, 26, 0) km, (80, 12, 0) km, (83, 9, 0) km,
+(86, 15, 0) km, (36, 80, 0) km, (39, 77, 0) km, (42,
+83, 0) km, (47, 39, 0) km, (50, 36, 0) km, (53, 42,
+0) km, (57, 67, 0) km, (60, 64, 0) km, (63, 70, 0) km,
+(17, 75, 0) km, (20, 72, 0) km, (23, 78, 0) km, (15,
+40, 0) km, (18, 37, 0) km, (21, 43, 0) km, (50, 10,
+0) km, (53, 7, 0) km, and (56, 13, 0) km, respectively.
+The initial value of each task is 50.
+4) The control parameters are set as follows: V min =
+0.2 km/s;
+V max = 1 km/s;
+φmax = 0.5 rad/s
+r;
+V w = 0.8 km/s km/s, φw = −π
+4 rad/s;R = 10 km;
+and δ = 0.01 s.
+5) Each algorithm runs 200 times separately on each
+instance, the population size is 80, and the maximum
+number of iterations is 1000.
+B.
+Analysis of Simulation Results
+1) Task Allocation and Path Planning: Fig. 4 simulates
+the dynamic planning process for a multi-UAV cooperative
+time-sensitive mission. The initial task allocation results
+and the TST status are shown in Fig. 4(a). In particu-
+lar, tasks T 1
+1 , T 3
+1 , T 1
+4 , and T 3
+4 were assigned to UAV1
+for execution, tasks T 1
+2 , T 3
+2 , T 1
+3 , and T 3
+3 were assigned
+to UAV2 for execution, tasks T 2
+1 and T 2
+4 were assigned
+to UAV3, and tasks T 2
+2 and T 2
+3 were assigned to UAV4.
+The tasks in the set {T1
+1, T 3
+1 , T 1
+2 , T 3
+2 , T 1
+3 , T 3
+3 , T 1
+4 , T 3
+4 } were
+reconnaissance or evaluation tasks, and UAVs in the set
+{UAV1, UAV2} were scout aircrafts. Meanwhile, the tasks
+in the set {T2
+1, T 2
+2 , T 2
+3 , T 2
+4 } were attack tasks, and UAVs
+in the set {U3,U4} were ﬁghter aircrafts. Therefore, the
+task allocation results satisﬁed the task type matching con-
+straints. UAV3 was initially equipped with ﬁve munitions
+assigned for two attack missions, and it consumed only
+two munitions. Similarly, UAV4 was initially equipped with
+three munitions assigned for two attack missions, and it
+consumed two munitions. In this way, the task assignment
+results satisﬁed the airborne ammunition constraints.
+According to the state of TST, the time-sensitive target
+TST1 appears ﬁrst, and according to the task allocation
+results, UAV1 completes the evaluation task of TST1.
+Thus, UAV1 is the alliance leader in this case, and UAV2,
+UAV3, and UAV4 are the members of the alliance. After
+3758
+IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS
+VOL. 59, NO. 4
+AUGUST 2023
+Authorized licensed use limited to: ZheJiang Sci-Tech University. Downloaded on March 16,2026 at 13:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+表I基于竞争协同进化的粒子群优化算法伪代码
+TST包含三种类型的任务，即侦察、攻击和评估。然后
+任务集为 {T11、T21、T 3
+1 , T12、T 2
+2 , T32、T13、T 2
+3 ,
+T33、T 1
+4 , T24、T 3
+4 }，它们的位置坐标分别为(28,17,
+0)公里、(31,14,0)公里、(34,20,0)公里、(30,57,
+0)公里、(33,54,0)公里、(36,60,0)公里、(72,42,
+0)公里、(75,39,0)公里、(78,45,0)公里、(87,38,
+0)公里、(90,35,0)公里和(93,41,0)公里。集结区指
+定的位置分别为(84,61,10)公里、(86,63,10)公里、
+(88,65,10)公里和(90,67,10)公里。指定集结区的对
+应位置分别为(68,82,10)公里、(70,84,10)公里、
+(72,86,10)公里和(74,88,10)公里。每个任务的固有
+价值为50。
+2)场景2是一个中等规模的任务规划问题：无人机编队
+由四架无人机构成，UAV1,和UAV2 是侦察机，UAV3 和
+UAV4 是战斗机，UAV3 配备三发弹药，UAV4 配备四发
+弹药。UAV1,、UAV2,、UAV3,和UAV4的初始位置分
+别为(7,7,10)公里、(5,5,10)公里、(3,3,10)公里和
+(11,10)公里，巡航速度为0.5公里/秒。战场环境中有七
+个TST。其位置坐标分别为(28,17,0)公里、(31,14,0)
+公里、(34,20,0)公里、(30,57,0)公里、(33,54,0)公
+里、(36,60,0)公里、(72,42,0)公里、(75,39,0)公里、
+(78,45,0)公里、(87,38,0)公里、(90,35,0)公里、
+(93,41,0)公里、(51,23,0)公里、(54,20,0)公里、
+(57,26,0)公里、(80,12,0)公里、(83,9,0)公里、
+(86,15,0)公里、(36,80,0)公里、(39,77,0)公里和
+(42,83,0)公里。每个任务的初始价值为50。
+3)场景3是一个大规模任务规划问题：无人机编队
+由五架无人机组成，UAV1,和UAV2 是侦察机，
+UAV3, 、UAV4, 和UAV5 是战斗机，UAV3 配备
+三发弹药，UAV4 配备四发弹药，UAV5 配备五发
+弹药。UAV1, 、UAV2, 、UAV3, 、UAV4和UAV5
+的初始位置分别为(99,10)公里、(77,10)公里、
+(5,5,10)公里、(3,3,10)公里和(1,1,10)公里。巡
+航速度为0.5公里/秒；战场环境中有12个TST，位
+置坐标为(28,17,0)公里、(31,14,0)公里、
+(34,20,0)公里、(30,57,0)公里、(33,54,0)公里、
+(36,60,0)公里、(72,42,0)公里、(75,39,0)公里、
+(78,45,0)公里、(87,38,0)公里、(90,35,0)公里、
+(93,41,0)公里、(51,23,0)公里、(54,20,0)公里、
+(57,26,0)公里、(80,12,0)公里、(83,9,0)公里、
+(86,15,0)公里、(36,80,0)公里、(39,77,0)公里、
+(42,83,0)公里、(47,39,0)公里、(50,36,0)公里、
+(53,42,0)公里、(57,67,0)公里、(60,64,0)公里、
+(63,7
+B.仿真结果分析
+1)任务分配与路径规划：图4模拟了多无人机协同
+时间敏感任务的动态规划过程。初始任务分配结果和
+TST状态如图4(a)所示。具体而言，任务T 1
+1 , T31、T
+14和T34被分配给UAV1执行，任务T 1
+2 , T32、T13和
+T33被分配给UAV2 执行，任务T 2
+1 和T24被分配给
+UAV3, ，任务T 2
+2 和T23被分配给UAV4。集合{T1
+1, T
+31、T 1
+2 , T32、T13、T33、T14、T 3
+4 } 中的任务是侦
+察或评估任务，集合{UAV1,UAV2} 中的无人机是侦察
+机。与此同时，集合{T2
+1, T22、T23、T 2
+4 } 中的任务
+是攻击任务，集合{U3,U4} 中的无人机是战斗机。因
+此，任务分配结果满足任务类型匹配约束。UAV3 最
+初配备了五枚弹药，用于两次攻击任务，并且只消耗
+了两枚弹药。
+根据TST的状态，时间敏感目标TST1 先出现，并
+且根据任务分配结果，UAV1 完成了TST1的评估任务。
+因此，在这种情况下，UAV1 是联盟的领导者，而
+UAV2,、UAV3, 和UAV4 是联盟的成员。之后
+3758
+《IEEE航天与电子系统学报》第59卷第4期8月2日
+023
+授权许可的使用仅限于：浙江科技大学。于2026年3月16日13:16:53UTC从IEEEXplore下载。适用限制。
+
+
+===== PAGE 10 =====
+Fig. 4.
+Initial task allocation and path planning.
+the UAV1 successfully allies, each UAV in the formation
+generates a mission execution path according to the task
+list and begins to maneuver toward the target. The path
+dynamically planned for the UAV formation cooperative
+mission is shown in Fig. 4(b). In Fig. 4(b), Path1 is the task
+execution path of UAV1, Path2 is the task execution path of
+UAV2, Path3 is the task execution path of UAV3, and Path4
+is the task execution path of UAV4. At time t1
+1 = 148 s,
+UAV1 began performing the TST1 reconnaissance task
+which was completed at time t1
+1 + t1
+1 = 160 s. Then,
+at time t2
+1 = 163 s, UAV3 began performing the TST1
+attack task and completed it at time t2
+1 + t2
+1 = 175 s.
+At time t3
+1 = 178 s, UAV1 started performing the TST1
+evaluation task and completed it at time t3
+1 + t3
+1 = 190 s.
+For time-sensitive target TST1, the reconnaissance task was
+executed ﬁrst, followed by the execution of attack task, and
+ﬁnally, the evaluation task was completed. Therefore, it can
+be concluded that the task allocation results met the task
+timing constraints. According to the task allocation results,
+the total range of each UAV in the formation was calculated,
+which was less than its maximum ﬂight distance, which in
+turn indicates that the task allocation results met the fuel
+constraint. According to Fig. 11, from time 0 s to 190 s, the
+relative distance between UAV2, UAV3, UAV4, and UAV1
+was less than R = 10 km, and thus, the planned path also
+satisﬁed the communication constraints and the UAVs in
+the formation remained interconnected.
+After UAV3 performed the attack task on TST1, it
+inherently had an impact on the subsequent TST time
+window, thus affecting the planned task allocation of the
+UAV formation. For example, the time window of TST2
+changed from 80.9027 to 45.8586 s. In such case, UAV4
+reached the task point T 2
+2 at time t2
+2 = 479 s, and subject
+to task timing constraints, UAV2 needed to hover and wait
+until UAV4 completed the attack task of TST2 before it
+could start the execution of T 3
+2 . Then, UAV2 completed the
+TST2 evaluation task at time t3
+2 + t3
+2 = 493 s, however, at
+this time, TST2 disappeared, which caused UAV2 to obtain
+a lower task revenue. Similarly, the TST3 time window
+changed from 89.3822 to 72.9165 s, and UAV4 reached
+the TST3 target point before UAV2. Here, UAV4 needed to
+hover and wait until UAV2 completed the reconnaissance
+task of TST3 before it could start executing T 2
+3 . Only after
+UAV4 completed the attack task of TST3, UAV2 could start
+the evaluation task of TST3. Nevertheless, at this time, TST3
+disappeared, and the effectiveness of time-sensitive target
+TST3 could not be evaluated, yielding a high time cost for
+UAV4.
+The TST4 time window changed from 241.4712 to
+108.7158 s. Since UAV1 could maneuver to the next target
+only after performing the TST1 evaluation task, at this early
+time, UAV1 was far from the target point of TST1, which
+then required a high time cost to complete the task. Mean-
+while, UAV3 reached the TST4 target point before UAV1,
+and UAV3 needed to hover and wait until UAV1 completed
+the reconnaissance task of TST4 before UAV3 could begin
+executing T 2
+4 . Therefore, for effective executions, the UAV
+collaborative planning subsystem needed to start collecting
+the information, and thus, adopted a multi-UAV cooperative
+time-sensitive mission dynamic planning algorithm. The
+results of the task reassignment and the state of sensitive
+targets are shown in Fig. 5(a), while the results of ﬂight
+path dynamic planning are shown in Fig. 5(b).
+Similar to previous case, at time 190 s, the evaluation
+task of the current TST is completed by UAV1, so UAV1 acts
+as the alliance leader. It can be seen from Fig. 11, at time 190
+s,UAV2,UAV3,andUAV4 areallwithinthecommunication
+range of UAV1, so these serve as the coalition members.
+After the UAV1 formation alliance is successful, the UAVs
+in the formation generate the task execution path according
+to task list and begin to maneuver to the target. It can be seen
+from Fig. 11 that at time 200 s, the relative distance between
+UAV2 and UAV1 is greater than R = 10 km. Meanwhile,
+UAV2 unable to communicate with the Relay UAV. Thus,
+after 200 s UAV2 unable to communicate with UAV1. Simi-
+larly, after 217 s UAV3 unable to communicate with UAV1.
+After UAV2 and UAV3 completes the task being executed,
+they maneuvers one by one to the remaining task positions
+in their task list at the maximum speed. For example,
+UAV2 completed the reconnaissance and evaluation tasks
+of TST2 at times t1
+2 + t1
+2 = 432 s and t3
+2 + t3
+2 = 485 s,
+respectively, whereas UAV3 completed the TST2 attack task
+at time t2
+2 + t2
+2 = 456 s. The striking event would affects
+the time window of the subsequent TST. The TST3 time
+window changes from 72.9165 to 81.9253 s, and the TST4
+time window changes from 108.7158 to 107.3042 s. Since
+UAV2 and UAV3 are no longer members of the alliance,
+at time 485 s, UAV2 maneuvers at maximum speed to
+ZHANG ET AL.: DYNAMIC MISSION PLANNING ALGORITHM FOR UAV
+3759
+Authorized licensed use limited to: ZheJiang Sci-Tech University. Downloaded on March 16,2026 at 13:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+图4.初始任务分配和路径规划。
+无人机1 成功编队，每个编队中的无人机根据任务列表
+生成任务执行路径，并开始向目标机动。无人机编队
+协同任务的动态规划路径如图4(b)所示。在图4(b)中，
+Path1 是无人机1,的任务执行路径，Path2 是无人机2,
+的任务执行路径，Path3 是无人机3,的任务执行路径，
+Path4是无人机4的任务执行路径。在时间t1
+1 = 148s时，
+无人机1 开始执行TST1 侦察任务，该任务在时间t
+1
+1 + t1
+1 = 160 s完成。然后，在时间t2
+1 = 163 s时，无
+人机3 开始执行TST1攻击任务，并在时间t2
+1 + t
+2
+1 = 175 s完成。在时间t3
+1 = 178 s时，无人机1 开始执
+行TST1评估任务，并在时间t3
+1 + t3
+1 = 190 s完成。对
+于时间敏感型目标TST1,，首先执行侦察任务，然后执
+行攻击任务，最后完成评估任务。因此，可以得出结
+论
+在无人机3 对TST1, 执行攻击任务后，它本质上对随后
+的TST时间窗口产生了影响，从而影响了计划中的任务分配
+无人机编队。例如，TST2的时间窗口从80.9027秒变
+为45.8586秒。在这种情况下，无人机4在时间t
+2
+2 = 479 s到达任务点T 2
+2 ，并且受任务时间约束的影响，
+无人机2 需要悬停等待，直到无人机4 完成TST2 的攻
+击任务后，才能开始执行T 3
+2 。然后，无人机2 在时间
+t3
+2 + t3
+2 = 493 s完成TST2 评估任务，但此时TST2 已
+消失，这导致无人机2 获得较低的任务收益。类似地，
+TST3 的时间窗口从89.3822秒变为72.9165秒，而无
+人机4 在无人机2之前到达TST3 目标点。在这里，无
+人机4 需要悬停等待，直到无人机2 完成TST3 的侦察
+任务后，才能开始执行T 2
+3 。只有在无人机4 完成TST3,
+的攻击任务后，无人机2 才能开始TST3的评估任务。
+然而，此时TST3已消失，时间敏感目标TST3 的有效
+性无法得到评估。
+TST4 时间窗口从241.4712秒变为108.7158秒。
+由于UAV1 只有在执行TST1 评估任务后才能机动到下
+一个目标，在这个早期阶段，UAV1 距离TST1, 的目标
+点很远，因此完成任务需要较高的时间成本。同时，
+UAV3 在UAV1,之前到达了TST4 目标点，而UAV3 需
+要悬停等待，直到UAV1 完成TST4 的侦察任务后，
+UAV3 才能开始执行T 2
+4 。因此，为了有效执行，
+UAV协同规划子系统需要开始收集信息，因此采用了
+多无人机协同的时敏任务动态规划算法。任务重新分
+配结果和敏感目标状态如图5(a)所示，飞行路径动态
+规划结果如图5(b)所示。
+与前一个案例类似，在190秒时，当前TST的评
+估任务由UAV1, 完成，因此UAV1 作为联盟领导。可
+以从图11中看到，在190秒时，UAV2,、UAV3,和
+UAV4都在UAV1, 的通信范围内，因此它们作为联盟
+成员。在UAV1 成功形成联盟后，联盟中的无人机根
+据任务列表生成任务执行路径，并开始机动至目标。
+从图11可以看出，在200秒时，UAV2 与UAV1 的相对
+距离大于R = 10 公里。同时，UAV2 无法与中继无人
+机通信。因此，在200秒后UAV2 无法与UAV1通信。
+同样地，在217秒后UAV3 无法与UAV1通信。在
+UAV2 和UAV3 完成正在执行的任务后，它们以最大
+速度依次机动至任务列表中剩余的任务位置。例如，
+UAV2 完成了侦察任
+张等：无人机动态任务规划算法
+3759
+授权许可的使用仅限于：浙江科技大学。于2026年3月16日13:16:53UTC从IEEEXplore下载。适用限制。
+
+
+===== PAGE 11 =====
+Fig. 5.
+Task allocation and path planning at t = 190 s.
+the reconnaissance mission point of TST4. Similarly, at
+time 456 s, UAV3 maneuvers at maximum speed to the
+corresponding position in the speciﬁed assembly area. The
+TST state, at time 485 s, is shown in Fig. 6(a), and the
+corresponding execution effect is illustrated in Fig. 6(b).
+After 485 s, each UAV continues to maneuver to the
+target as planned. While maneuvering, UAV2 detects an
+unknown target at time 497 s and forms a temporary coali-
+tion against it as the leader. At this point, since UAV3 is
+within the communication range of UAV2, UAV3 becomes a
+coalition member of UAV2. At time 511 s, UAV3 completes
+its attack on the discovered unknown target, while UAV2
+completes the evaluation of the unknown target at time 526s.
+Once the unknown target is fully executed, the temporary
+alliance is dissolved, and UAV2 and UAV3 continue to ﬂy
+at their maximum speed as planned. In addition, UAV1
+completed the reconnaissance and evaluation tasks of TST3
+at times t1
+3 + t1
+3 = 569 s and t3
+3 + t3
+3 = 617 s, respec-
+tively, and UAV4 completed the attack task of TST3 at time
+t3
+2 + t3
+2 = 598 s. At time 598 s, the time window of TST4
+changed from 107.3042 to 47.9794 s, which would affect
+the performance of UAV formation mission. Therefore,
+at this time, the UAV collaborative planning subsystem
+required a task redistribution. The obtained results of task
+reassignment and TST state are shown in Fig. 7(a), and
+the results of ﬂight path dynamic planning are shown in
+Fig. 7(b).
+At time 617 s, the evaluation task of the current TST is
+completed by UAV1, so UAV1 acts as the alliance leader. It
+Fig. 6.
+Task allocation and path planning at t = 485 s.
+can be seen from Fig. 11, at time 617 s, UAV2 and UAV3 are
+outside the maximum communication range of UAV1, only
+UAV4 is within the communication range of UAV1, hence
+UAV1 and UAV4 jointly reconnaissance, strike and evaluate
+the target TST4. UAV1 completed the reconnaissance and
+evaluation tasks of TST4 at times t1
+4 + t1
+4 = 689 s and
+t3
+4 + t3
+4 = 732 s, respectively, while UAV4 completed the
+attack task of TST4 at time t2
+4 + t2
+4 = 712 s. Evidently, the
+UAV formation completed all the tasks in coordination, as
+shown in Fig. 8.
+Progressively, at time 732 s, the evaluation task of the
+current TST is completed by UAV1, so UAV1 acts as the
+leader of the alliance. It can be seen from Fig. 11, UAV2 and
+UAV3 establish communication with UAV1 at time 714 s
+and time 703 s, respectively. Therefore, at time 732 s, UAV2,
+UAV3, and UAV4 are all within the communication range of
+UAV1, and serve as the members of UAV1 alliance. After the
+UAV1 alliance is successfully formed, the UAV formation
+ﬂies cooperatively to the assembly point. From Figs. 9 and
+11, the four UAVs reach the corresponding positions in
+the speciﬁed aggregation area at t = 900 s and form the
+expected formation. Evident from Figs. 10 and 11, the
+UAV formation enters the formation-keeping ﬂight phase
+and reaches the target endpoint cooperatively at t = 1125 s.
+Therefore, it can be concluded that the planned path satisﬁes
+the multi-UAV cooperative constraints and communication
+constraints.
+2) Performance Index Comparison Veriﬁcation of Eight
+Heuristic Algorithms: The GA, ACO, SA, BNN, PSO,
+3760
+IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS
+VOL. 59, NO. 4
+AUGUST 2023
+Authorized licensed use limited to: ZheJiang Sci-Tech University. Downloaded on March 16,2026 at 13:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+图5.任务分配与路径规划att = 190 s。
+TST4的侦察任务点。同样地，在456秒时，UAV3 以
+最大速度机动到指定集合区的相应位置。TST状态在
+485秒时如图6(a)所示，对应的执行效果如图6(b)所示。
+在485秒后，每架无人机按照计划继续机动前往目
+标。在机动过程中，UAV2 在497秒时检测到一个未知
+目标，并作为领导者对其形成临时联盟。此时，由于
+UAV3 在UAV2, 的通信范围内，UAV3 成为UAV2的联
+盟成员。在511秒时，UAV3 完成了对发现的未知目标
+的攻击，而UAV2在526秒完成了对未知目标的评估。
+一旦未知目标被完全执行，临时联盟将解散，UAV2
+和UAV3 按照计划继续以最大速度飞行。此外，
+UAV1分别在t1
+3 + t1
+3 = 569 秒和t3
+3 + t3
+3 = 617 秒完成
+了TST3的侦察和评估任务，而UAV4 在t3
+2 + t3
+2 = 598
+秒完成了TST3 的攻击任务。在598秒时，TST4的时间
+窗口从107.3042秒变为47.9794秒，这将影响无人机
+编队任务的性能。因此，此时，无人机
+在第617秒时，当前TST的评估任务由无人机1, 完成，
+因此无人机1 充当联盟领导者。
+图6.任务分配与路径规划att = 485 s。
+从图11可以看出，在617秒时，UAV2 和UAV3 位
+于UAV1, 的最大通信范围之外，只有UAV4 在
+UAV1, 的通信范围内，因此UAV1 和UAV4 共同对
+目标TST4进行侦察、打击和评估。UAV1 分别在时
+间t1
+4 + t1
+4 = 689 s和t3
+4 + t3
+4 = 732 s完成了TST4 
+的侦察和评估任务，而UAV4 在时间t2
+4 + t2
+4 = 712
+s完成了TST4 的打击任务。显然，如图8所示，该
+无人机编队协调完成了所有任务。
+逐步地，在732秒时，当前TST的评估任务由
+UAV1, 完成，因此UAV1 作为联盟的领导者。从图11
+可以看到，UAV2 和UAV3 分别在714秒和703秒与
+UAV1 建立通信。因此，在732秒时，UAV2,、UAV3,
+和UAV4 都在UAV1, 的通信范围内，并作为UAV1 联盟
+的成员。在UAV1 联盟成功形成后，无人机编队协同
+飞向集合点。从图9和图11可知，四架无人机在t
+= 900 秒时到达指定聚集区的相应位置，并形成预期编
+队。从图10和图11可以明显看出，无人机编队进入保
+持编队飞行阶段，并在t= 1125 秒时协同到达目标终点。
+因此，可以得出结论，规划路径满足多无人机协同约
+束和通信约束。
+2)八种启发式算法性能指标比较验证：遗传算法(GA)、蚁群算法
+(ACO)、模拟退火(SA)、贝叶斯神经网络(BNN)、粒子群优化(PSO)、
+3760
+《IEEE航天与电子系统学报》第59卷第4期8月2日
+023
+授权许可的使用仅限于：浙江科技大学。于2026年3月16日13:16:53UTC从IEEEXplore下载。适用限制。
+
+
+===== PAGE 12 =====
+Fig. 7.
+Task allocation and path planning at t = 617 s.
+Fig. 8.
+Task allocation and path planning at t = 732 s.
+spherical vector-based PSO (SPSO), improved PSO algo-
+rithmproposedinthisarticle(CPSO),andrapidly-exploring
+random tree were used to solve the mission planning model
+of the UAV formation in combat scenarios with three differ-
+ent scales. The average ﬁtness value of the optimal solution
+Fig. 9.
+Formation aggregation path planning.
+Fig. 10.
+Formation holding path planning.
+Fig. 11.
+Relative distance between alliance leader and alliance
+members.
+is used as the evaluation indexes for comparing algorithm
+performance, and verify the superiority of CPSO algorithm.
+Scenario 1 was a small-scale mission planning problem,
+which required twelve tasks to be allocated to four UAVs.
+Table II gives the optimal solutions obtained by the eight
+algorithms after 200 experiments in scenario 1. Jmin and
+Jmax represents the optimal value and the worst value in
+the 200 operation results, respectively. Jvalue represents the
+average value of the 200 operation results, Jtheory the theo-
+retical value of the optimal solution obtained by algorithms
+ZHANG ET AL.: DYNAMIC MISSION PLANNING ALGORITHM FOR UAV
+3761
+Authorized licensed use limited to: ZheJiang Sci-Tech University. Downloaded on March 16,2026 at 13:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+图7.任务分配与路径规划att = 617 s。
+图8.任务分配与路径规划att = 732 s。
+球面向量型粒子群优化（SPSO）、本文提出的改进
+粒子群优化算法（CPSO）以及快速探索随机树被用
+来解决三种不同规模战斗场景下无人机编队的任务规
+划模型。最优解的平均适应度值
+图9.编队聚合路径规划。
+图10.编队保持路径规划。
+图11.联盟领导者与联盟成员之间的相对距离。
+被用作比较算法性能的评估指标，并验证CPSO算法的优越
+性。
+场景1是一个小规模的任务规划问题，需要将十
+二个任务分配给四架无人机。表II给出了八种算法在
+场景1中经过200次实验获得的最优解。Jmin 和Jmax 分
+别表示200次运行结果中的最优值和最差值。Jvalue 表
+示200次运行结果的平均值，Jtheory 表示算法获得的最
+优解的理论值。
+张等：无人机动态任务规划算法
+3761
+授权许可的使用仅限于：浙江科技大学。于2026年3月16日13:16:53UTC从IEEEXplore下载。适用限制。
+
+
+===== PAGE 13 =====
+TABLE II
+Optimal Solutions of Eight Algorithms in Scenario 1
+Fig. 12.
+Optimal ﬁtness value versus iteration number in scenario 1.
+for solving mission planning problems, Krepresents the
+number of times the optimal solution is obtained in 200
+experiments.
+It can be seen from Table II that in 200 independent
+simulation experiments, all the eight algorithms can obtain
+the optimal solution, but the improved PSO algorithm in this
+article (CPSO) has the largest number of times to obtain the
+optimal solution, which is 999 times. The average value of
+the ﬁtness value of the optimal solution Jvalue is the smallest,
+which is 2.8653E+2, and the algorithm performance is
+improved.
+Fig. 12 shows the convergence curves of the average
+value of the ﬁtness value of the optimal solution obtained by
+the eight algorithms in SCENARIO 1. The BNN algorithm
+can obtain the optimal solution. The GA algorithm had poor
+global search and evolutionary abilities, and the results were
+signiﬁcantly different from those of the other seven algo-
+rithms. The ACO algorithm and SA algorithm showed faster
+initial optimization speeds but soon converged into local
+optima. The PSO algorithm had a fast optimization speed
+in the initial stage, but it fell into local optima in the middle
+stage. The BNN algorithm had a poor optimization ability
+initially. With the continuous training of the optimization
+ability, better solutions were obtained. Both the SPSO and
+the CPSO could obtain better solutions without falling into
+local optima.
+Scenario 2 was a medium-scale mission planning prob-
+lem, which required 21 tasks to be allocated to four UAVs.
+Table III gives the optimal solutions obtained by the eight
+algorithms after 200 experiments in scenario 2. Fig. 13
+shows the convergence curves of the average value of the
+TABLE III
+Optimal Solutions of Eight Algorithms in Scenario 2
+Fig. 13.
+The optimal ﬁtness value versus iteration number in scenario 2.
+TABLE IV
+Optimal Solutions of Eight Algorithms in Scenario 3
+ﬁtness value of the optimal solution obtained by the eight
+algorithms in scenario 2.
+Table III gives that the eight algorithms can obtain the
+optimal solution, and the CPSO algorithm is superior to the
+other seven algorithms in the superiority of the solution.
+That is, the CPSO algorithm has the largest number of
+times to obtain the optimal solution, which is 986 times.
+The average value of ﬁtness value of the optimal solution is
+the smallest, which is 0.9154E+3. Fig. 13 shows that The
+CPSOcouldobtainbettersolutionswithoutfallingintolocal
+optima.
+Scenario 3 was a large-scale mission planning problem,
+which required 36 tasks to be allocated to ﬁve UAVs.
+Table IV gives the optimal solutions obtained by the eight
+algorithms after 200 experiments in scenario 3. Fig. 14
+shows the convergence curves of the average value of the
+ﬁtness value of the optimal solution obtained by the eight
+algorithms in scenario 3.
+Table IV gives that except for the RTT algorithm, the
+above seven algorithms can obtain the optimal solution, and
+3762
+IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS
+VOL. 59, NO. 4
+AUGUST 2023
+Authorized licensed use limited to: ZheJiang Sci-Tech University. Downloaded on March 16,2026 at 13:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+表II情景1中八种算法的最优解
+图12.场景1中最优适应度值与迭代次数的关系。
+在解决任务规划问题时，K表示在200次实验中获得
+最优解的次数。
+从表二可以看出，在200次独立的仿真实验中，
+所有八种算法都能获得最优解，但本文改进的粒子群
+优化算法（CPSO）获得最优解的次数最多，为999次。
+最优解的适应度值Jvalue 的平均值最小，为2.8653E+2，
+算法性能得到了提升。
+图12显示了在场景1中八种算法获得的最优解的适
+应度平均值的收敛曲线。BNN算法能够获得最优解。
+GA算法的全局搜索和进化能力较差，其结果与其他七
+种算法明显不同。ACO算法和SA算法在初期显示出较
+快的优化速度，但很快陷入局部最优。PSO算法在初
+期优化速度较快，但在中期陷入局部最优。BNN算法
+起初优化能力较弱，随着优化能力的不断训练，获得
+了更好的解。SPSO和CPSO都能够获得更好的解，并
+且不会陷入局部最优。
+场景2是一个中等规模的任务规划问题，需要将
+21个任务分配给四架无人机。表III给出了八种算法在
+场景2中经过200次实验后获得的最优解。图13显示了
+平均值的收敛曲线
+表III情景2中八种算法的最优解
+图13。
+sce中的最优适应值与迭代次数的关系
+情节2.
+表IV情景3中八种算法的最优解
+八种算法在情景2中获得的最优解的适应度值。
+表III显示，八种算法都能够获得最优解，并且
+CPSO算法在解的优越性方面优于其他七种算法。也
+就是说，CPSO算法获得最优解的次数最多，为986
+次。最优解的适应度平均值最小，为0.9154E+3。图
+13显示，CPSO可以获得更好的解而不陷入局部最优。
+情景3是一个大规模任务规划问题，需要将36个任
+务分配给五架无人机。表IV给出了八种算法在情景3中
+进行200次实验后获得的最优解。图14显示了八种算法
+在情景3中获得的最优解的适应度值平均值的收敛曲线。
+表IV显示，除RTT算法外，上述七种算法都可以获
+得最优解，并且
+3762
+《IEEE航天与电子系统学报》第59卷第4期8月2日
+023
+授权许可的使用仅限于：浙江科技大学。于2026年3月16日13:16:53UTC从IEEEXplore下载。适用限制。
+
+
+===== PAGE 14 =====
+Fig. 14.
+Optimal ﬁtness value versus iteration number in scenario 3.
+Fig. 15.
+Average ﬁtness values obtained by three distributed task
+allocation algorithms in combat scenarios with three different scales.
+the CPSO algorithm is superior to the other six algorithms in
+the superiority of the solution. That is, the CPSO algorithm
+has the largest number of times to obtain the optimal solu-
+tion, which is 957 times. The average value of ﬁtness value
+of the optimal solution is the smallest, which is 1.4234E+3.
+Fig. 14 shows that The CPSO could obtain better solutions
+without falling into local optima.
+3) Performance Comparison of Three Distributed Mis-
+sion Planning Algorithms: To further verify the perfor-
+mance of the proposed algorithm, the multi-UAV cooper-
+ative time-sensitive mission dynamic planning algorithm
+(T-S_CPSO) proposed in this article, consensus-based bun-
+dle algorithm (CBBA), and consensus-based grouping algo-
+rithm (CBGA) are used to solve the above three large-scale,
+medium-scale and small-scale task allocation problems.
+The formation task execution efﬁciency and algorithm time
+complexity are used as the evaluation indexes for compar-
+ing algorithm performance, and verify the superiority of
+T-S_CPSO algorithm. Fig. 15 shows the average ﬁtness
+values obtained by above three distributed task allocation
+algorithms in combat scenarios with three different scales,
+after 200 experiments.
+It can be seen from Fig. 15 that in scenario 1, the average
+ﬁtness values obtained by T-S_CPSO algorithm, CBBA
+algorithm, and CBGA algorithm to solve the small-scale
+task allocation problems are 2.8653E+2, 3.3648E+2, and
+3.3715E+2, respectively. Notably, average ﬁtness value
+Fig. 16.
+Average ﬁtness values obtained by three distributed task
+allocation algorithms in combat scenarios with three different scales.
+is inversely proportional to the formation task execution
+efﬁciency, and since the average ﬁtness value obtained
+by T-S_CPSO algorithm is the smallest, this algorithm
+can obtain a higher formation task execution efﬁciency.
+Similarly, in scenarios 2 and 3, the average ﬁtness value
+obtained by T-S_CPSO algorithm is far less than the average
+ﬁtness values obtained by CBBA and CBGA algorithms.
+Certainly, compared with CBBA and CBGA algorithms,
+T-S_CPSO algorithm can greatly improve the efﬁciency of
+formation task execution, thereby highlighting the need for
+including task timing constraints in task allocation research.
+The CBBA and CBGA algorithms consider that each task
+has the same priority, and thus, they are not suitable for
+solving the task allocation problem with priority constraints
+due to difﬁculties in dealing with the temporal coupling re-
+lationship between the tasks. However, in combat missions
+involvingTSTs,thetemporalcouplingrelationshipbetween
+the tasks is quite complex, which may lead to a decrease
+in the effectiveness of CBBA and CBGA algorithms. In
+addition, T-S_CPSO algorithm allocates the tasks according
+to global observation information, while CBBA and CBGA
+algorithms allocate the tasks according to local observation
+information. Therefore, using T-S_CPSO algorithm algo-
+rithm to solve the task allocation problem will obtain a
+higher formation task execution efﬁciency.
+Fig. 16 displays the average calculation time in 200
+experiments spent by the above three distributed mission
+planning algorithms to solve the task allocation problems
+of large, medium and small scale. It can be seen from
+Fig. 16 that in scenario 1, the average calculation time of
+T-S_CPSO, CBBA, and CBGA algorithms is divided into
+2.5, 2.2, and 2.3 s, respectively. In Scenario 2, the average
+calculation time of T-S_CPSO, CBBA, and CBGA algo-
+rithms is divided into 3.8, 3.4 and 3.4 s, respectively. In sce-
+nario 3, the average calculation time of T-S_CPSO, CBBA,
+and CBGA algorithms is divided into 6.7, 5.9, and 5.8 s,
+respectively. The average calculation time spent by
+the T-S_CPSO algorithm is the largest among the
+three algorithms. The T-S_CPSO time complexity is
+ZHANG ET AL.: DYNAMIC MISSION PLANNING ALGORITHM FOR UAV
+3763
+Authorized licensed use limited to: ZheJiang Sci-Tech University. Downloaded on March 16,2026 at 13:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+图14.场景3中最优适应度值随迭代次数的变化。
+图15.在三种不同规模的作战场景中，三种分布式任务分配算
+法获得的平均适应度值。
+CPSO算法在解的优越性方面优于其他六种算法。也
+就是说，CPSO算法获得最优解的次数最多，为957
+次。最优解的适应度值平均值最小，为1.4234E+3。
+图14显示，CPSO可以获得更好的解而不会陷入局部
+最优。
+3)三种分布式任务规划算法的性能对比：为进一
+步验证所提出算法的性能，本文提出的多无人机协同
+时间敏感任务动态规划算法（T‑S_CPSO）、基于共识
+的捆绑算法（CBBA）和基于共识的分组算法（
+CBGA）被用于解决上述三种大规模、中规模和小规
+模任务分配问题。编队任务执行效率和算法时间复杂
+度被用作比较算法性能的评价指标，并验证T‑S_
+CPSO算法的优越性。图15显示了上述三种分布式任务
+分配算法在三种不同规模的作战场景中，经过200次实
+验后获得的平均适应度值。
+从图15可以看出，在场景1中，T‑S_CPSO算法、
+CBBA算法和CBGA算法解决小规模任务分配问题所获
+得的平均适应度值分别为2.8653E+2、3.3648E+2和
+3.3715E+2。值得注意的是，平均适应度值
+图16.三种分布式任务分配算法在三种不同规模的作战场景中
+获得的平均适应度值。
+与编队任务执行效率成反比，由于T‑S_CPSO算法获
+得的平均适应度值最小，因此该算法可以获得更高的
+编队任务执行效率。类似地，在场景2和场景3中，
+T‑S_CPSO算法获得的平均适应度值远低于CBBA和
+CBGA算法获得的平均适应度值。当然，与CBBA和
+CBGA算法相比，T‑S_CPSO算法可以大大提高编队
+任务执行效率，从而凸显在任务分配研究中纳入任务
+时间约束的必要性。CBBA和CBGA算法认为每个任
+务具有相同的优先级，因此它们不适合解决具有优先
+级约束的任务分配问题，因为难以处理任务之间的时
+间耦合关系。然而，在涉及TST的作战任务中，任务
+之间存在时间耦合关系
+图16显示了上述三种分布式任务规划算法在200
+次实验中解决大、中、小规模任务分配问题所花费的
+平均计算时间。从图16可以看出，在场景1中，T‑S_
+CPSO、CBBA和CBGA算法的平均计算时间分别为
+2.5、2.2和2.3秒。在场景2中，T‑S_CPSO、CBBA和
+CBGA算法的平均计算时间分别为3.8、3.4和3.4秒。
+在场景3中，T‑S_CPSO、CBBA和CBGA算法的平均
+计算时间分别为6.7、5.9和5.8秒。三种算法中，
+T‑S_CPSO算法所花费的平均计算时间最大。T‑S_
+CPSO的时间复杂度是
+张等：无人机动态任务规划算法
+3763
+授权许可使用仅限于：Zhe
+江科技大学。于2026年3月16日下载于
+13:16:53UTC来自IEEEXplore。受限使用。
+
+
+===== PAGE 15 =====
+O(M ×℘× kmax) + O(ς), where M is the population size,
+℘is the dimension, kmax is the maximum number of iter-
+ations, and ς is the time spent in the coalition formation
+process. The alliance formation process is further divided
+into three stages: alliance release; alliance application;
+and alliance authorization, so the time spent in the coali-
+tion formation process is ς = 3δHmax = 6δ. On the other
+hand, time complexity of CBBA and CBGA algorithms is
+O(ς ∗(M × ℑ× kmax)), where ℑis the dimension. Since
+CBBA and CBGA algorithms allocate the tasks accord-
+ing to local observation information while T-S _ CPSO
+algorithm allocates the tasks according to global observa-
+tion information, ℑ≤℘, that is, O(ς ∗(M × ℑ× kmax)) ≤
+[O((M ×℘× kmax)) + O(ς)]. It should be noted that while
+constructing T-S_CPSO algorithm, the PSO algorithm is
+improved by introducing a speciﬁc particle coding method
+and a competitive co-evolutionary population updating
+strategy, which greatly increases the solving speed of multi-
+objective optimization model. Therefore, the time complex-
+ity of T-S_CPSO algorithm is not much different from that
+of CBBA and CBGA algorithms. Hence, the T-S_CPSO
+algorithm can meet the requirements of fast response of
+multi-UAV time-sensitive task allocation.
+VII.
+CONCLUSION
+This article solve the problem of the dynamic allocation
+of multiple UAVs for multiple time-sensitive tasks, but there
+are still some shortcomings. Given the research content of
+this article, the problems worthy of further discussion and
+research include the following.
+1) The application scenarios of this article are com-
+pleted when the task execution information is com-
+pletely complete, that is, it is assumed that the ob-
+servation information obtained by the UAV partic-
+ipating in the task is complete. However, due to
+the performance limitations of sensor devices and
+communication devices carried by UAVs and the
+randomness and uncertainty of transmission delay
+and packet loss, the information obtained by UAVs
+is incomplete. Therefore, one of the key research
+directions in the next step is to study the cooperative
+mission planning of multiple UAVs under incom-
+plete information conditions.
+2) The performance of multi-UAV communication net-
+work has an important inﬂuence on the effect of
+formation cooperative task execution. This article
+only considers the inﬂuence of network topology
+on multi-UAV cooperative task execution, but does
+not consider the inﬂuence of communication mode
+and channel access mode on multi-UAV coopera-
+tive task execution. Therefore, the next key research
+direction is to combine the communication simula-
+tion software to study the performance of the UAV
+communication network and its impact on the multi-
+UAVcooperativemissionplanning,andonthisbasis,
+improve and expand the algorithm proposed in this
+article.
+REFERENCES
+[1] S. Li and X. Fang, “A modiﬁed adaptive formation of UAV swarm by
+pigeon ﬂock behavior within local visual ﬁeld,” Aerosp. Sci. Technol.,
+vol. 114, 2021, Art. no. 106736.
+[2] A. Kurt, N. Saputro, K. Akkaya, and A. S. Uluagac, “Distributed con-
+nectivity maintenance in swarm of drones during post-disaster trans-
+portation applications,” IEEE Trans. Intell. Transp. Syst., vol. 22,
+no. 9, pp. 6061–6073, Sep. 2021.
+[3] Y. Zeng, X. Xu, S. Jin, and R. Zhang, “Simultaneous navigation
+and radio mapping for cellular-connected UAV with deep reinforce-
+ment learning,” IEEE Trans. Wireless Commun., vol. 20, no. 7,
+pp. 4205–4220, Jul. 2021.
+[4] S. Sawadsitang, D. Niyato, P. S. Tan, P. Wang, and S. Nutanong,
+“Shipper cooperation in stochastic drone delivery: A dynamic
+Bayesian game approach,” IEEE Trans. Veh. Technol., vol. 70, no. 8,
+pp. 7437–7452, Aug. 2021.
+[5] Z. Sun, G. G. Yen, J. Wu, H. Ren, H. An, and J. Yang, “Mission
+planning for energy- efﬁcient passive UAV radar imaging system
+based on substage division collaborative search,” IEEE Trans. Cy-
+bern., vol. 53, no. 1, pp. 275–288, Jan. 2023.
+[6] Z. Y. Zhen, D. J. Xing, and C. Gao, “Cooperative search-
+attack mission planning for multi-UAV based on intelligent self-
+organized algorithm,” Aerosp. Sci. Technol., vol. 76, pp. 402–411,
+2018.
+[7] Z. Y. Zhen et al., “Distributed intelligent self-organized mission plan-
+ning of multi-UAV for dynamic targets cooperative search-attack,”
+Chin. J. Aeronaut., vol. 32, no. 12, pp. 2706–2716, 2021.
+[8] M. Zhang et al., “Helicopter-UAVs search and rescue task allocation
+considering UAVs operating environment and performance,” Com-
+put. Ind. Eng., vol. 167, May 2022, Art. no. 107994.
+[9] K. Harikumar, J. Senthilnath, and S. Sundaram, “Mission aware
+motion planning (MAP) framework with physical and geographical
+constraints for a swarm of mobile stations,” IEEE Trans. Cybern.,
+vol. 50, no. 3, pp. 1209–1219, Mar. 2020.
+[10] J. Chen, X. Gao, and L. Ding, “Design and operation strategies
+of the system for destroying time-sensitive target based on system
+effectiveness,” J. Syst. Eng. Electron., vol. 19, no. 6, pp. 1151–1156,
+2008.
+[11] C. Zhan and Y. Zeng, “Aerial-ground cost tradeoff for multi-UAV-
+enabled data collection in wireless sensor networks,” IEEE Trans.
+Commun., vol. 68, no. 3, pp. 1937–1950, Mar. 2020.
+[12] H. Savuran and M. Karakaya, “Efﬁcient route planning for an un-
+manned air vehicle deployed on a moving carrier,” Soft Comput.,
+vol. 20, no. 7, pp. 2905–2920, 2016.
+[13] V. K. Shetty, M. Sudit, and R. Nagi, “Priority-based assignment and
+routingofaﬂeetofunmannedcombataerialvehicles,”Comput.Oper.
+Res., vol. 35, no. 6, pp. 1813–1828, 2008.
+[14] M. H. Kim, H. Baik, and S. Lee, “Resource welfare based task
+allocation for UAV team with resource constraints,” J. Intell. Robot.
+Syst., vol. 77, no. 3-4, pp. 611–627, 2015.
+[15] Y. Liao and V. Friderikos, “Energy and age pareto optimal trajectories
+in UAV-assisted wireless data collection,” IEEE Trans. Veh. Technol.,
+vol. 71, no. 8, pp. 9101–9106, Aug. 2022.
+[16] C. Liu et al., “A framework for autonomous vehicles with goal
+inference and task allocation capabilities to support peer collabo-
+ration with human agents,” Ultrason. Sonochemistry, vol. 14, no. 6,
+pp. 689–694, 2014.
+[17] P. Maini, K. Sundar, M. Singh, S. Rathinam, and P. B. Sujit, “Coop-
+erative aerial-ground vehicle route planning with fuel constraints for
+coverage applications,” IEEE Trans. Aerosp. Electron. Syst., vol. 55,
+no. 6, pp. 3016–3028, Dec. 2019.
+[18] H. Hamledari et al., “Automation of inspection mission planning
+using 4D BIMs and in support of unmanned aerial vehicle-based data
+collection,” J. Construction Eng. Manage., vol. 147, no. 3, pp. 1–15,
+2021.
+[19] J. Chen et al., “Joint task assignment and spectrum allocation in
+heterogeneous UAV communication networks: A coalition formation
+game-theoretic approach,” IEEE Trans. Wireless Commun., vol. 20,
+no. 1, pp. 440–452, Jan. 2021.
+3764
+IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS
+VOL. 59, NO. 4
+AUGUST 2023
+Authorized licensed use limited to: ZheJiang Sci-Tech University. Downloaded on March 16,2026 at 13:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+O(M ×℘×kmax) +O(ς)，其中M是种群规模，
+℘是维度，kmax 是最大迭代次数，ς 是联盟形成过
+程中消耗的时间。联盟形成过程进一步分为三个阶段：
+联盟释放、联盟申请和联盟授权，因此联盟形成过程
+中消耗的时间为ς = 3δHmax = 6δ。另一方面，CBB
+A和CBGA算法的时间复杂度是O(ς ∗(M × ℑ×kmax))，
+其中 ℑ是维度。由于CBBA和CBGA算法根据局部
+观测信息分配任务，而T‑S_ CPSO算法根据全局观测
+信息分配任务，ℑ≤℘，即O(ς ∗(M × ℑ× kmax)) ≤[
+O((M ×℘×kmax)) +O(ς)]。需要注意的是，在构建
+T‑S_CPSO算法时，通过引入特定的粒子编码方法和
+竞争协同进化种群更新策略对PSO算法进行了改进。
+七、结论
+本文解决了多无人机对多时效性任务的动态分配
+问题，但仍存在一些不足。结合本文的研究内容，值
+得进一步讨论和研究的问题包括以下几个方面。
+1)本文的应用场景是在任务执行信息完全完整时
+完成的，即假设参与任务的无人机获得的观测信
+息是完整的。然而，由于无人机所携带的传感器
+设备和通信设备的性能限制，以及传输延迟和数
+据包丢失的随机性和不确定性，无人机获得的信
+息是不完整的。因此，下一步的一个关键研究方
+向是研究在信息不完全条件下多无人机的协同任
+务规划。
+2)多无人机通信网络的性能对编队协同任务执行效
+果有重要影响。本文仅考虑了网络拓扑对多无人机
+协同任务执行的影响，但未考虑通信模式和信道接
+入方式对多无人机协同任务执行的影响。因此，下
+一步的关键研究方向是结合通信仿真软件研究无人
+机通信网络的性能及其对多无人机协同任务规划的
+影响，并在此基础上改进和扩展本文提出的算法。
+参考文献
+[1] S.Li和X.Fang，“一种基于本地视野内鸽群行为的改良
+型无人机群体自适应形成”，Aerosp.《科学技术》，第114卷，
+2021年，艺术。不。106736。[2] A.Kurt、N.Saputro、K.
+Akkaya和A.S.Uluagac，《灾后无人机群的分布式连接性维护》，
+IEEE汇报。《系统通报》，第22卷，第9期，第6061–6073页，
+2021年9月。[3] Y.Zeng、X.Xu、S.Jin和R.Zhang，《基于深
+度强化学习的蜂窝连接无人机的同步导航与无线电测绘》，IEEE
+Trans.WirelessCommun.，第20卷，第7期，第4205–4220页，
+2021年7月。[4] S.Sawadsitang，D.Niyato，P.S.Tan，P.
+Wang和S.Nutanong，《随机无人机交付中的托运合作：动态贝
+叶斯博弈方法》，IEEE汇编Veh.Technol.，第70卷，第8期，第
+7437–7452页，2021年8月。[5] 孙志、严建、吴志、任、H。安，
+和杨志强，《基于节能被动无人机雷达成像系统的任务规划》
+3764
+《IEEE航天与电子系统学报》第59卷第4期8月20日
+23
+授权许可的使用仅限于：浙江科技大学。于2026年3月16日13:16:53UTC从IEEEXplore下载。适用限制。
+
+
+===== PAGE 16 =====
+[20] Y. Z. Zhang et al., “UAV swarm mission planning in dynamic envi-
+ronment using consensus-based bundle algorithm,” Sensors, vol. 20,
+no. 8, pp. 1–21, 2020.
+[21] J. Xiong, J. Li, J. Li, S. Kang, C. Liu, and C. Yang, “Probability-
+tuned market-based allocations for UAV swarms under unreliable
+observations,” IEEE Trans. Cybern., vol. 53, no. 2, pp. 1–12, 2023.
+[22] M. D. Phung and Q. P. Ha, “Safety-enhanced UAV path planning
+with spherical vector-based particle swarm optimization,” Appl. Soft
+Comput., vol. 107, 2021, Art. no. 107376.
+[23] S. K. Shao et al., “Efﬁcient path planning for UAV formation via
+comprehensivelyimprovedparticleswarmoptimization,”ISATrans.,
+vol. 97, pp. 415–430, 2020.
+[24] Y. V. Pehlivanoglu and P. Pehlivanoglu, “An enhanced genetic al-
+gorithm for path planning of autonomous UAV in target coverage
+problems,” Appl. Soft Comput., vol. 112, 2021, Art. no. 107796.
+[25] S. Perez-Carabaza et al., “Ant colony optimization for multi-UAV
+minimum time search in uncertain domains,” Appl. Soft Comput.,
+vol. 62, pp. 789–806, 2018.
+[26] S. K. Shao et al., “Efﬁcient path planning for UAV formation via
+comprehensivelyimprovedparticleswarmoptimization,”ISATrans.,
+vol. 97, pp. 415–430, 2020.
+[27] Z. Y. Zhen, D. J. Xing, and C. Gao, “Cooperative search-attack
+mission planning for multi-UAV based on intelligent self-organized
+algorithm,” Aerosp. Sci. Technol., vol. 76, pp. 402–411, 2018.
+[28] M. Roshanzamir, M. A. Balafar, and S. N. Razavi, “A new hierar-
+chical multi group particle swarm optimization with different task
+allocations inspired by Holonic multi agent systems,” Expert Syst.
+Appl., vol. 149, 2020, Art. no. 113292.
+[29] M. Yan et al., “Task allocation and route planning of multiple UAVs
+in a marine environment based on an improved particle swarm op-
+timization algorithm,” EURASIP J. Adv. Signal Process., vol. 2021,
+no. 1, pp. 1–23, 2021.
+[30] J. C. Amorim, V. Alves, and E. P. de Freitas, “Assessing a swarm-
+GAP based solution for the task allocation problem in dynamic
+scenarios,” Expert Syst. Appl., vol. 152, 2020, Art. no. 113437.
+[31] H. Xie, D. Yang, L. Xiao, and J. Lyu, “Connectivity-aware 3D UAV
+path design with deep reinforcement learning,” IEEE Trans. Veh.
+Technol., vol. 70, no. 12, pp. 13022–13034, Dec. 2021.
+[32] Y. Wu, K. H. Low, and C. Lv, “Cooperative path planning for
+heterogeneous unmanned vehicles in a search-and-track mission
+aiming at an underwater target,” IEEE Trans. Veh. Technol., vol. 69,
+no. 6, pp. 6782–6787, Jun. 2020.
+[33] L. Zuo et al., “A fast and robust algorithm with reinforcement
+learning for large UAV cluster mission planning,” Remote Sens.,
+vol. 14, no. 6, 2022, Art. no. 1304.
+[34] J. Chen et al., “Consensus-based bundle algorithm with local replan-
+ning for heterogeneous multi-UAV system in the time-sensitive and
+dynamic environment,” IEEE Trans. Intell. Transp. Syst., vol. 78,
+no. 2, pp. 1712–1740, Feb. 2022.
+[35] L. Evers et al., “Online stochastic UAV mission planning with time
+windows and time-sensitive targets,” Eur. J. Oper. Res., vol. 238,
+no. 1, pp. 348–362, 2014.
+[36] Z. Y. Zhen et al., “An intelligent cooperative mission planning
+scheme of UAV swarm in uncertain dynamic environment,” Aerosp.
+Sci. Technol., vol. 100, 2020, Art. no. 105826.
+[37] Y. Chen, D. Yang, and J. Yu, “Multi-UAV task assignment with
+parameter and time-sensitive uncertainties using modiﬁed two-part
+wolf pack search algorithm,” IEEE Trans. Aerosp. Electron. Syst.,
+vol. 54, no. 6, pp. 2853–2872, Dec. 2018.
+[38] C. R. Atencia, J. Del Ser, and D. Camacho, “Weighted strategies
+to guide a multi-objective evolutionary algorithm for multi-UAV
+mission planning,” Swarm Evol. Comput., vol. 44, pp. 480–495,
+2019.
+Jing Zhang received the M.S. degree in 2015
+from Hainan University, Haikou, China, where
+she is currently working toward the Ph.D. degree
+in information and communication engineering.
+Her research interests include intelligent
+system, collaborative control, and machine
+learning.
+Yani Cui received the Ph.D. degree in infor-
+mation and communication engineering from
+Hainan University, Haikou, China, in 2017.
+She is currently a Lecturer with the School of
+Information and Communication Engineering,
+Hainan University, Haikou, China. Her research
+interests include intelligent system, collabora-
+tive control, and image processing.
+Jia Ren received the Ph.D. degree in system
+engineering from Northwestern Polytechnical
+University, Xi’an, China, in 2011.
+He is currently a Professor with the School
+of Information and Communication Engineer-
+ing, Hainan University, Haikou, China. His re-
+search interests include intelligent control, ma-
+chine learning and Bayesian netwonet work.
+ZHANG ET AL.: DYNAMIC MISSION PLANNING ALGORITHM FOR UAV
+3765
+Authorized licensed use limited to: ZheJiang Sci-Tech University. Downloaded on March 16,2026 at 13:16:53 UTC from IEEE Xplore.  Restrictions apply. 
+[20] Y.Z.Zhang等，“利用基于共识的捆绑算法在动态环境中进
+行无人机群任务规划，”《传感器》，第20卷，第8期，第1–21页，
+2020年。[21] J.Xiong,J.Li,J.Li,S.Kang,C.Liu和C.Yang，
+“在不可靠观测下对无人机群进行概率调谐的基于市场的分配，”
+《IEEE控制学报》，第53卷，第2期，第1–12页，2023年。[22]
+M.D.Phung和Q.P.Ha，“采用基于球向量的粒子群优化进行
+安全增强的无人机路径规划，”《应用软计算》，第107卷，2021
+年，文章编号107376。[23]S.K.Shao等，“通过全面改进的粒子
+群优化实现无人机编队的高效路径规划，”《ISA交易》，第97卷，
+第415–430页，2020年。[24]Y.V.Pehlivanoglu和P.
+Pehlivanoglu，“一种用于目标覆盖问题中自主无人机路径规划的
+增强遗传算法，”《应用软计算》，第112卷，2021年，文章编号
+107796。[25]S.Perez‑Carabaza等，“不确定情况下多无人机最
+短时间搜索的蚁群优化”
+[36] Z.Y.Zhen等,“不确定动态环境下UAV群智能协作任务规划
+方案,”航空航天科学技术,第100卷,2020年,文章编号105826.[37]
+Y.Chen,D.Yang,和J.Yu,“使用改进的双部分狼群搜索算法解
+决具有参数和时间敏感不确定性的多UAV任务分配问题,”IEEE
+航空电子系统学报,第54卷,第6期,页2853–2872,2018年12月.[38]
+C.R.Atencia,J.DelSer,和D.Camacho,“引导多目标进化算
+法进行多UAV任务规划的加权策略,”群体进化计算,第44卷,第
+495页,2019年480页–。
+张静于2015年在中国海口海南大学获得硕士
+学位，目前她正在该校攻读信息与通信工程
+的博士学位。
+她的研究兴趣包括智能系统、协同控制
+和机器学习。
+崔雅妮于2017年在中国海口海南大学获得信
+息与通信工程博士学位。
+她目前是中国海口海南大学信息与通信
+工程学院的讲师。她的研究兴趣包括智能系
+统、协作控制和图像处理。
+贾仁于2011年在中国西安西北工业大学获得
+系统工程博士学位。
+他目前是海南大学信息与通信工程学院
+的教授，位于中国海口。他的研究兴趣包括
+智能控制、机器学习和贝叶斯网络。
+张等：无人机动态任务规划算法
+3765
+授权许可使用仅限于：Zhe
+江科技大学。于2026年3月16日下载于
+13:16:53UTC来自IEEEXplore。适用限制。

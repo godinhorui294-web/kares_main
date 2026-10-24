@@ -1,0 +1,460 @@
+{
+  "problem_name": "Forest Firefighting UAV Mission Planning Problem (UAV-Firefighting)",
+  "version": "2.1",
+  "description": "UAVs collaboratively execute forest firefighting missions, comprising reconnaissance, firefighting, and reinspection stages",
+  "instances_dir": "instances/uav",
+  "instance_pattern": "*/firefighting_instance_*.json",
+
+  "1_problem_scale": {
+    "description": "Problem scale",
+    "num_uavs": 16,
+    "num_scout_uavs": 4,
+    "num_fighter_uavs": 12,
+    "num_fire_points": 25,
+    "tasks_per_fire": 3,
+    "total_tasks": 75,
+    "chromosome_encoding": {
+      "type": "two-layer encoding (task permutation + UAV assignment)",
+      "length": 150,
+      "structure": {
+        "first_half": {
+          "indices": "0~74",
+          "content": "Task permutation (a full permutation of 1~75, denoting task execution order)",
+          "length": 75
+        },
+        "second_half": {
+          "indices": "75~149",
+          "content": "UAV assignment, one-to-one with the task permutation; each gene is a UAV ID (1~16)",
+          "length": 75,
+          "constraint": "Must match the task type (reconnaissance/reinspection may only be assigned UAV1~4, firefighting may only be assigned UAV5~16)"
+        }
+      }
+    },
+    "task_constraints": {
+      "sequence_constraint": "All tasks follow the sequence constraint (reconnaissance → firefighting → reinspection)",
+      "time_window_constraint": "Only firefighting tasks have time window constraints"
+    }
+  },
+
+  "2_uav_properties": {
+    "description": "UAV properties",
+    "uavs": [
+      {
+        "id": 1,
+        "type": "scout",
+        "type_en": "scout",
+        "initial_position_km": [7, 7, 10],
+        "speed_km_s": 0.5,
+        "max_range_km": 1000,
+        "ammo": 0,
+        "description": "Executes reconnaissance and reinspection tasks"
+      },
+      {
+        "id": 2,
+        "type": "scout",
+        "type_en": "scout",
+        "initial_position_km": [5, 5, 10],
+        "speed_km_s": 0.5,
+        "max_range_km": 1000,
+        "ammo": 0,
+        "description": "Executes reconnaissance and reinspection tasks"
+      },
+      {
+        "id": 3,
+        "type": "scout",
+        "type_en": "scout",
+        "initial_position_km": [3, 3, 10],
+        "speed_km_s": 0.5,
+        "max_range_km": 1000,
+        "ammo": 0,
+        "description": "Executes reconnaissance and reinspection tasks"
+      },
+      {
+        "id": 4,
+        "type": "scout",
+        "type_en": "scout",
+        "initial_position_km": [1, 1, 10],
+        "speed_km_s": 0.5,
+        "max_range_km": 1000,
+        "ammo": 0,
+        "description": "Executes reconnaissance and reinspection tasks"
+      },
+      {
+        "id": 5,
+        "type": "fighter",
+        "type_en": "fighter",
+        "initial_position_km": [9, 9, 10],
+        "speed_km_s": 0.5,
+        "max_range_km": 800,
+        "ammo": 6,
+        "ammo_reset_value": 3,
+        "description": "Carries 6 water bombs; ammunition resets to 3 after refilling"
+      },
+      {
+        "id": 6,
+        "type": "fighter",
+        "type_en": "fighter",
+        "initial_position_km": [11, 11, 10],
+        "speed_km_s": 0.5,
+        "max_range_km": 800,
+        "ammo": 6,
+        "ammo_reset_value": 3,
+        "description": "Carries 6 water bombs; ammunition resets to 3 after refilling"
+      },
+      {
+        "id": 7,
+        "type": "fighter",
+        "type_en": "fighter",
+        "initial_position_km": [13, 13, 10],
+        "speed_km_s": 0.5,
+        "max_range_km": 800,
+        "ammo": 5,
+        "ammo_reset_value": 3,
+        "description": "Carries 5 water bombs; ammunition resets to 3 after refilling"
+      },
+      {
+        "id": 8,
+        "type": "fighter",
+        "type_en": "fighter",
+        "initial_position_km": [15, 15, 10],
+        "speed_km_s": 0.5,
+        "max_range_km": 800,
+        "ammo": 5,
+        "ammo_reset_value": 3,
+        "description": "Carries 5 water bombs; ammunition resets to 3 after refilling"
+      },
+      {
+        "id": 9,
+        "type": "fighter",
+        "type_en": "fighter",
+        "initial_position_km": [17, 17, 10],
+        "speed_km_s": 0.5,
+        "max_range_km": 800,
+        "ammo": 5,
+        "ammo_reset_value": 3,
+        "description": "Carries 5 water bombs; ammunition resets to 3 after refilling"
+      },
+      {
+        "id": 10,
+        "type": "fighter",
+        "type_en": "fighter",
+        "initial_position_km": [19, 19, 10],
+        "speed_km_s": 0.5,
+        "max_range_km": 800,
+        "ammo": 5,
+        "ammo_reset_value": 3,
+        "description": "Carries 5 water bombs; ammunition resets to 3 after refilling"
+      },
+      {
+        "id": 11,
+        "type": "fighter",
+        "type_en": "fighter",
+        "initial_position_km": [21, 21, 10],
+        "speed_km_s": 0.5,
+        "max_range_km": 800,
+        "ammo": 5,
+        "ammo_reset_value": 3,
+        "description": "Carries 5 water bombs; ammunition resets to 3 after refilling"
+      },
+      {
+        "id": 12,
+        "type": "fighter",
+        "type_en": "fighter",
+        "initial_position_km": [23, 23, 10],
+        "speed_km_s": 0.5,
+        "max_range_km": 800,
+        "ammo": 5,
+        "ammo_reset_value": 3,
+        "description": "Carries 5 water bombs; ammunition resets to 3 after refilling"
+      },
+      {
+        "id": 13,
+        "type": "fighter",
+        "type_en": "fighter",
+        "initial_position_km": [25, 25, 10],
+        "speed_km_s": 0.5,
+        "max_range_km": 800,
+        "ammo": 5,
+        "ammo_reset_value": 3,
+        "description": "Carries 5 water bombs; ammunition resets to 3 after refilling"
+      },
+      {
+        "id": 14,
+        "type": "fighter",
+        "type_en": "fighter",
+        "initial_position_km": [27, 27, 10],
+        "speed_km_s": 0.5,
+        "max_range_km": 800,
+        "ammo": 5,
+        "ammo_reset_value": 3,
+        "description": "Carries 5 water bombs; ammunition resets to 3 after refilling"
+      },
+      {
+        "id": 15,
+        "type": "fighter",
+        "type_en": "fighter",
+        "initial_position_km": [29, 29, 10],
+        "speed_km_s": 0.5,
+        "max_range_km": 800,
+        "ammo": 5,
+        "ammo_reset_value": 3,
+        "description": "Carries 5 water bombs; ammunition resets to 3 after refilling"
+      },
+      {
+        "id": 16,
+        "type": "fighter",
+        "type_en": "fighter",
+        "initial_position_km": [31, 31, 10],
+        "speed_km_s": 0.5,
+        "max_range_km": 800,
+        "ammo": 5,
+        "ammo_reset_value": 3,
+        "description": "Carries 5 water bombs; ammunition resets to 3 after refilling"
+      }
+    ],
+    "operational_rules": [
+      "Scout UAVs carry no firefighting ammunition and can only execute reconnaissance and reinspection tasks",
+      "When a fighter UAV executes a firefighting task, the ammunition consumed equals the fire point's HP (an integer in 1~3)",
+      "Before execution, it must be checked that remaining ammunition ≥ HP; otherwise the task fails",
+      "Each UAV's accumulated flight distance over all its assigned tasks must not exceed its maximum flight range; otherwise the UAV's route is invalid",
+      "After refilling, the UAV is located at the base and then flies from the base to the fire point to fight the fire",
+      "Before executing a firefighting task, a fighter UAV whose remaining ammunition < the current fire point's HP must first return to the base to refill"
+    ]
+  },
+
+  "3_fire_point_properties": {
+    "description": "Fire point properties (task points)",
+    "fire_points": {
+      "count": 25,
+      "position": {
+        "coordinate_system": "km",
+        "x_range": [20, 100],
+        "y_range": [10, 90],
+        "z": 0,
+        "generation": "Randomly generated within the region"
+      },
+      "initial_protection_value": {
+        "range": [50, 100],
+        "distribution": "uniform random",
+        "description": "Represents the combined value of the surrounding forest, facilities, personnel, etc.",
+        "symbol": "Vj"
+      },
+      "fire_hp": {
+        "values": [1, 2, 3],
+        "distribution": "equiprobable uniform distribution",
+        "symbol": "HP_j",
+        "description": "A firefighting task consumes HP_j water bombs, and the executing UAV must have remaining ammunition ≥ HP_j"
+      }
+    },
+    "time_window": {
+      "applicable_to": "Only firefighting has time windows",
+      "window_start": {
+        "range": [0, 500],
+        "unit": "seconds",
+        "distribution": "uniform random"
+      },
+      "window_duration": {
+        "range": [100, 200],
+        "unit": "seconds",
+        "distribution": "uniform random"
+      },
+      "window_end": "start_j + D_j"
+    },
+    "tasks": {
+      "tasks_per_fire": 3,
+      "task_definitions": [
+        {
+          "type_id": 1,
+          "name": "reconnaissance",
+          "name_en": "reconnaissance",
+          "description": "Confirms the fire situation; consumes no ammunition",
+          "ammo_consumption": 0
+        },
+        {
+          "type_id": 2,
+          "name": "firefighting",
+          "name_en": "firefighting",
+          "description": "Consumes HP_j water bombs to extinguish the fire point",
+          "ammo_consumption": "HP_j",
+          "has_time_window": true
+        },
+        {
+          "type_id": 3,
+          "name": "reinspection",
+          "name_en": "reinspection",
+          "description": "Confirms the fire is extinguished; consumes no ammunition",
+          "ammo_consumption": 0
+        }
+      ],
+      "task_coordinates": "All three tasks share the fire point's coordinates (x_j, y_j, 0)",
+      "sequence_constraint": {
+        "order": "Reconnaissance must precede firefighting, and firefighting must precede reinspection",
+        "enforcement": "This order is naturally guaranteed by the global task execution order (a wrong order causes the task to fail)"
+      }
+    }
+  },
+
+  "4_objective_function": {
+    "description": "Objective function",
+    "formula": "total reward = Σ(reward of all tasks) - Σ(cost of all tasks) - Σ(UAV flight cost)",
+    "components": {
+      "task_reward": {
+        "description": "Task reward",
+        "formula": "3 × Vj × HP_j",
+        "condition": "The reward is earned only when all 3 tasks of a fire point are completed",
+        "calculation": "When all three tasks of fire point j are completed, the reward 3 × Vj × HP_j is earned",
+        "explanation": "Vj is the fire point's protection value (50~100) and HP_j is the fire's HP (1~3); different fire points yield different rewards according to their value and HP"
+      },
+      "delay_cost": {
+        "description": "Task delay cost",
+        "condition": "A linear penalty applies when a task's start time exceeds its time window",
+        "penalty_coefficient": 10,
+        "unit": "penalty coefficient per unit time",
+        "formula": "max(0, start time - end_j) × 10"
+      },
+      "flight_cost": {
+        "description": "Flight cost",
+        "cost_per_km": 3,
+        "formula": "total flight distance × 3",
+        "explanation": "The cost coefficient is 3 per km of flight distance"
+      },
+      "total_flight_distance": {
+        "description": "Total flight distance",
+        "calculation": "Sum of travel distances between all tasks (including the distance from the initial position to the first task)"
+      }
+    }
+  },
+
+  "5_chromosome_encoding_decoding": {
+    "description": "Chromosome encoding and decoding",
+
+    "5_1_chromosome_representation": {
+      "description": "Chromosome representation",
+      "length": 75,
+      "gene_description": "Corresponds to the 75 tasks. Each gene is an integer in 1~75, the globally unique identifier (ID) of a task",
+      "task_id_encoding": {
+        "rule": "The three tasks of fire point j are ID=(j-1)*3+1 (reconnaissance), (j-1)*3+2 (firefighting), and (j-1)*3+3 (reinspection), in order",
+        "examples": [
+          "Fire point 1: ID=1 (reconnaissance), 2 (firefighting), 3 (reinspection)",
+          "Fire point 2: ID=4 (reconnaissance), 5 (firefighting), 6 (reinspection)",
+          "Fire point 25: ID=73 (reconnaissance), 74 (firefighting), 75 (reinspection)"
+        ]
+      },
+      "chromosome_type": "Permutation: every task ID appears exactly once, without repetition",
+      "execution_order": "The chromosome order defines the global task execution order: tasks earlier in the chromosome are executed first, later ones afterward"
+    },
+
+    "5_2_decoding_process": {
+      "description": "Decoding process (chromosome-specified UAV assignment)",
+      "method": "Process tasks in chromosome order; the UAV for each task is specified by the second half of the chromosome, then feasibility is verified and timings computed",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Initialization",
+          "details": [
+            "Initialize all UAV states (position, current time, remaining ammunition, accumulated flight range)",
+            "Initialize each fire point's state (0=not started, 1=reconnaissance done, 2=firefighting done, 3=all three tasks succeeded)"
+          ]
+        },
+        {
+          "step": 2,
+          "name": "Task processing loop",
+          "details": "For each task ID in the chromosome (index i):",
+          "sub_steps": [
+            {
+              "sub_step": "2.1",
+              "action": "Fetch task info and the assigned UAV",
+              "details": "Fetch the task's fire point number j and type t (1=reconnaissance, 2=firefighting, 3=reinspection); take the i-th gene of the chromosome's second half as assigned_uav"
+            },
+            {
+              "sub_step": "2.2",
+              "action": "Sequence constraint check",
+              "details": "If the fire point's current state ≠ t-1, the task fails (sequence violation penalty +10) and is skipped"
+            },
+            {
+              "sub_step": "2.3",
+              "action": "UAV type matching check",
+              "details": "Check that the assigned_uav's type matches the task type (reconnaissance/reinspection require scout, firefighting requires fighter). A mismatch fails the task (penalty +10) and skips it"
+            },
+            {
+              "sub_step": "2.4",
+              "action": "Ammunition and flight range check",
+              "details": "For firefighting tasks: if the assigned_uav's remaining ammunition < HP_j, check whether a round trip to the base to refill is possible. If the round trip exceeds the maximum flight range, the task fails (penalty +1) and is skipped"
+            },
+            {
+              "sub_step": "2.5",
+              "action": "Compute arrival and start times",
+              "details": [
+                "Flight distance d = Euclidean distance (UAV's current position → fire point position)",
+                "Flight time Δt = d / speed (0.5 km/s)",
+                "Arrival time t_arrive = UAV's current time + Δt",
+                "If a refill is needed: first fly to the base (distance dist_to_base, taking dist_to_base/speed), refill at the base (5.0 seconds), then fly to the fire point (distance dist_from_base)"
+              ],
+              "feasibility_checks": [
+                "For a firefighting task with t_arrive > end_j, record the delay cost (do not skip; penalize the delay only)",
+                "For a firefighting task with t_arrive < start_j, wait until start_j, i.e., start time = start_j; otherwise start time = t_arrive",
+                "Flight range check: if the UAV's accumulated range + d > maximum range, the UAV is infeasible (penalty +0.1) and the task is skipped"
+              ]
+            },
+            {
+              "sub_step": "2.6",
+              "action": "Execute the task and update states",
+              "updates": [
+                "Update the UAV's position to the fire point position",
+                "Update the current time to the start time",
+                "Remaining ammunition (decrease by HP_j for firefighting tasks)",
+                "Increase the accumulated flight range by the flight distance",
+                "If a refill is needed, first update the flight range and time for the trip to the base and back, and reset ammunition to 3",
+                "Mark the task as successful and update the fire point state (reconnaissance→1, firefighting→2, reinspection→3)",
+                "When the fire point state becomes 3 (reinspection done), accumulate the fire point's reward 3×Vj×HP_j",
+                "For a firefighting task whose start time > end_j, record the delay cost"
+              ]
+            }
+          ]
+        },
+        {
+          "step": 3,
+          "name": "Final computation",
+          "details": "After all tasks are processed, compute:",
+          "calculations": [
+            "Total reward = sum of rewards over all successful fire points (each fire point's reward is 3×Vj×HP_j)",
+            "Total delay cost = max(0, start time - end_j) × 10 over all firefighting tasks",
+            "Total flight cost = sum of all UAVs' accumulated flight ranges × 3",
+            "Constraint violation penalty = number of constraint violations × 1000",
+            "Fitness (objective value) = total reward - total delay cost - total flight cost - constraint violation penalty"
+          ]
+        }
+      ]
+    },
+
+    "5_3_explanation": {
+      "description": "Notes",
+      "points": [
+        "The first half of the chromosome (75 genes) encodes the task execution order as a permutation of 1~75",
+        "The second half of the chromosome (75 genes) encodes the UAV assignment: each position gives the UAV ID assigned to the task at the same index",
+        "During decoding, tasks are processed in order; a task fails with a penalty upon a sequence violation (type mismatch), UAV type mismatch, insufficient ammunition, or insufficient flight range",
+        "Firefighting tasks tolerate late arrival (penalized but not skipped), while reconnaissance and reinspection tasks have no time window constraints",
+        "Mutation operators: swap/insert/inversion may be applied to the task order part, while 1~3 positions of the UAV assignment part may be randomly reassigned"
+      ]
+    }
+  },
+
+  "6_base_station": {
+    "description": "Base station information",
+    "position": [25, 25, 10],
+    "functions": [
+      "Where UAVs refill ammunition",
+      "After refilling, the UAV's position becomes the base coordinates",
+      "Refill time: 5.0 seconds"
+    ]
+  },
+
+  "7_constants": {
+    "description": "Constant parameters",
+    "uav_speed_km_s": 0.5,
+    "flight_cost_per_km": 3,
+    "delay_penalty_per_unit_time": 10,
+    "task_reward_formula": "3 × Vj × HP_j",
+    "refill_time_seconds": 5.0
+  }
+}

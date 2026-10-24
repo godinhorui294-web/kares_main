@@ -1,0 +1,51 @@
+{
+  "problem_name": "CVRPLib Set P (Capacitated VRP)",
+  "version": "1.0",
+  "description": "Capacitated vehicle routing problem (CVRPLib Set P). Single depot, capacity constraint, EUC_2D distances; the objective is to minimize total travel distance. Proxy fitness = 3000 - total_distance.",
+
+  "instances_dir": "instances/cvrp_set_p",
+  "instance_pattern": "P-n*-k*.json",
+
+  "1_problem_scale": {
+    "description": "Problem scale (varies per instance, n=16~101)",
+    "chromosome_encoding": {
+      "type": "customer permutation",
+      "content": "Full permutation of customer ids (1-indexed, depot excluded), length = number of customers",
+      "decoding": "Greedy split: accumulate demands along the permutation, open a new route on capacity overflow"
+    },
+    "task_constraints": {
+      "capacity": "Sum of customer demands on each route ≤ capacity(Q)",
+      "depot": "All routes start and end at the single depot (id=1)",
+      "visit": "Each customer is visited exactly once by one vehicle"
+    }
+  },
+
+  "2_instance_properties": {
+    "description": "Instance properties (JSON fields)",
+    "fields": {
+      "dimension": "Total number of nodes (depot included)",
+      "num_customers": "Number of customers = dimension - 1",
+      "capacity": "Vehicle capacity Q",
+      "depot_id": "Depot node id (always 1)",
+      "edge_weight_type": "EUC_2D (Euclidean distance, rounded)",
+      "nodes": "[{id, x, y, demand, is_depot}]",
+      "distance_matrix": "Precomputed n×n integer distance matrix, index = id-1",
+      "optimal": "Best known value published by CVRPLib (used only for reporting the gap, not involved in the algorithm)"
+    }
+  },
+
+  "3_objective_direction": {
+    "direction": "minimize",
+    "note": "CVRP is a minimization problem. The pipeline compares by 'maximization', so a proxy is used: best_fitness = FITNESS_LARGE(3000) - total_distance"
+  },
+
+  "4_objective_function": {
+    "description": "Objective function (minimize total distance)",
+    "formula": "minimize total_distance = Σ route_distance; route_distance = d(depot,first)+Σ d(i,i+1)+d(last,depot)",
+    "proxy_fitness": "best_fitness = 3000 - total_distance (maximization semantics, aligned with pipeline comparison/sorting/barrier)",
+    "components": {
+      "total_distance": {"description": "Sum of route distances over all routes, each route including the round trip to the depot"},
+      "route_distance": {"description": "Single route: accumulated distance along depot→first customer→…→last customer→depot"}
+    }
+  }
+}
